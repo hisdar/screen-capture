@@ -554,7 +554,7 @@ BOOL CScreenCaptureDlg::DrawScreenCaptureResult(CDC * pCDC)
 	}
 
 	// 4. draw information
-	bRet = DrawInformation(&wndCDCMem);
+	// bRet = DrawInformation(&wndCDCMem);
 
 	// 5. copy window dc to window dc
 	bRet = pCDC->BitBlt(0, 0, cx, cy, &wndCDCMem, 0, 0, SRCCOPY);
