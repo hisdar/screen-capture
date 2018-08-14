@@ -1,0 +1,10 @@
+ScreenCapture/Debug/ScreenCapture.log
+/ipch/*
+/Debug/*
+/Release/*
+/ScreenCapture/Debug/*
+/ScreenCapture/Release/*
+*.sdf
+*.opensdf
+*.suo
+
