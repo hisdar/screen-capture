@@ -125,9 +125,11 @@
     <None Include="res\ScreenCapture.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base-def.h" />
     <ClInclude Include="HButton.h" />
     <ClInclude Include="HStatic.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SCEdit.h" />
     <ClInclude Include="ScreenCapture.h" />
     <ClInclude Include="ScreenCaptureDlg.h" />
     <ClInclude Include="SCToolBar.h" />
@@ -141,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="HButton.cpp" />
     <ClCompile Include="HStatic.cpp" />
+    <ClCompile Include="SCEdit.cpp" />
     <ClCompile Include="ScreenCapture.cpp" />
     <ClCompile Include="ScreenCaptureDlg.cpp" />
     <ClCompile Include="SCToolBar.cpp" />
