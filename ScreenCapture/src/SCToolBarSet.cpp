@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "ScreenCapture.h"
+#include "resource.h"
 #include "SCToolBarSet.h"
 #include "afxdialogex.h"
 

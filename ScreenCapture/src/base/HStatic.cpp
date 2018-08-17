@@ -2,8 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "ScreenCapture.h"
-#include "HStatic.h"
+#include "base/HStatic.h"
 
 
 // HStatic

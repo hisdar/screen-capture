@@ -96,12 +96,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ScreenCapture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ScreenCaptureDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -111,57 +105,135 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SCToolBar.h">
+    <ClInclude Include="include\ScreenCaptureDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="UserDraw.h">
+    <ClInclude Include="include\SCToolBar.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="HButton.h">
+    <ClInclude Include="include\SCToolBarSet.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="HStatic.h">
+    <ClInclude Include="include\UserDraw.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SCToolBarSet.h">
+    <ClInclude Include="include\ScreenCaptureApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SToolBarSet.h">
+    <ClInclude Include="include\base\base-def.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="UserDrawRect.h">
+    <ClInclude Include="include\base\HButton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\base\HStatic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SCMonitor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SCMonitorManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\SCArrowTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\SCCircleTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\SCMaskTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\SCRectangleTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\select\SCSelectToolController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\select\SCSelectToolView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\base\SCBaseToolView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\base\SCBaseTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SCTextTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SCDrawPanel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\base\SCObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\base\SCBaseToolController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\select\SCSelectTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ScreenCapture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ScreenCaptureDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SCToolBar.cpp">
+    <ClCompile Include="src\ScreenCaptureDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="UserDraw.cpp">
+    <ClCompile Include="src\SCToolBar.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HButton.cpp">
+    <ClCompile Include="src\SCToolBarSet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HStatic.cpp">
+    <ClCompile Include="src\UserDraw.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SCToolBarSet.cpp">
+    <ClCompile Include="src\ScreenCaptureApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SToolBarSet.cpp">
+    <ClCompile Include="src\base\HButton.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="UserDrawRect.cpp">
+    <ClCompile Include="src\base\HStatic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SCMonitor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SCMonitorManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\SCArrowTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\SCCircleTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\SCMaskTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\SCRectangleTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\select\SCSelectToolController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\select\SCSelectToolView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\SCObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\SCTextTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SCDrawPanel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\select\SCSelectTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

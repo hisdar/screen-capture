@@ -1,6 +1,7 @@
 #pragma once
 #include "afxwin.h"
-#include "HButton.h"
+#include "base/HButton.h"
+#include "resource.h"
 
 // CSCToolBar 对话框
 
@@ -19,6 +20,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+
 private:
 
 	HButton m_okBtn;
@@ -71,6 +73,7 @@ public:
 	virtual BOOL OnInitDialog();
 
 	void Reset();
+	//int GetSelectedTool();
 
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonCancle();

@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "ScreenCapture.h"
+#include "ScreenCaptureApp.h"
 #include "ScreenCaptureDlg.h"
 #include <GdiPlus.h>
 #include <Windows.h>

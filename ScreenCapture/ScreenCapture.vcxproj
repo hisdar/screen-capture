@@ -43,9 +43,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>include;.;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>include;.;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -125,33 +127,57 @@
     <None Include="res\ScreenCapture.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HButton.h" />
-    <ClInclude Include="HStatic.h" />
+    <ClInclude Include="include\base\base-def.h" />
+    <ClInclude Include="include\base\HButton.h" />
+    <ClInclude Include="include\base\HStatic.h" />
+    <ClInclude Include="include\ScreenCaptureApp.h" />
+    <ClInclude Include="include\ScreenCaptureDlg.h" />
+    <ClInclude Include="include\SCToolBar.h" />
+    <ClInclude Include="include\SCToolBarSet.h" />
+    <ClInclude Include="include\tool\base\SCBaseToolController.h" />
+    <ClInclude Include="include\tool\SCArrowTool.h" />
+    <ClInclude Include="include\tool\base\SCBaseToolView.h" />
+    <ClInclude Include="include\tool\SCCircleTool.h" />
+    <ClInclude Include="include\tool\SCMaskTool.h" />
+    <ClInclude Include="include\tool\SCRectangleTool.h" />
+    <ClInclude Include="include\UserDraw.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="ScreenCapture.h" />
-    <ClInclude Include="ScreenCaptureDlg.h" />
-    <ClInclude Include="SCToolBar.h" />
-    <ClInclude Include="SCToolBarSet.h" />
+    <ClInclude Include="include\SCMonitor.h" />
+    <ClInclude Include="include\SCMonitorManager.h" />
+    <ClInclude Include="include\base\SCObject.h" />
+    <ClInclude Include="include\tool\base\SCBaseTool.h" />
+    <ClInclude Include="include\SCDrawPanel.h" />
+    <ClInclude Include="include\tool\select\SCSelectToolController.h" />
+    <ClInclude Include="include\tool\select\SCSelectToolView.h" />
+    <ClInclude Include="include\SCTextTool.h" />
+    <ClInclude Include="include\tool\select\SCSelectTool.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SToolBarSet.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="UserDraw.h" />
-    <ClInclude Include="UserDrawRect.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HButton.cpp" />
-    <ClCompile Include="HStatic.cpp" />
-    <ClCompile Include="ScreenCapture.cpp" />
-    <ClCompile Include="ScreenCaptureDlg.cpp" />
-    <ClCompile Include="SCToolBar.cpp" />
-    <ClCompile Include="SCToolBarSet.cpp" />
+    <ClCompile Include="src\tool\select\SCSelectTool.cpp" />
+    <ClCompile Include="src\SCDrawPanel.cpp" />
+    <ClCompile Include="src\tool\select\SCSelectToolController.cpp" />
+    <ClCompile Include="src\tool\select\SCSelectToolView.cpp" />
+    <ClCompile Include="src\tool\SCTextTool.cpp" />
+    <ClCompile Include="src\base\SCObject.cpp" />
+    <ClCompile Include="src\SCMonitor.cpp" />
+    <ClCompile Include="src\SCMonitorManager.cpp" />
+    <ClCompile Include="src\base\HButton.cpp" />
+    <ClCompile Include="src\base\HStatic.cpp" />
+    <ClCompile Include="src\ScreenCaptureApp.cpp" />
+    <ClCompile Include="src\ScreenCaptureDlg.cpp" />
+    <ClCompile Include="src\SCToolBar.cpp" />
+    <ClCompile Include="src\SCToolBarSet.cpp" />
+    <ClCompile Include="src\tool\SCArrowTool.cpp" />
+    <ClCompile Include="src\tool\SCCircleTool.cpp" />
+    <ClCompile Include="src\tool\SCMaskTool.cpp" />
+    <ClCompile Include="src\tool\SCRectangleTool.cpp" />
+    <ClCompile Include="src\UserDraw.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SToolBarSet.cpp" />
-    <ClCompile Include="UserDraw.cpp" />
-    <ClCompile Include="UserDrawRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ScreenCapture.rc" />

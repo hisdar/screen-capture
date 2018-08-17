@@ -1,5 +1,7 @@
 #pragma once
-#include "hstatic.h"
+
+#include "base/hstatic.h"
+#include "resource.h"
 #include "afxwin.h"
 
 #define DEFAULT_SIZE	2

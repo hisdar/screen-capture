@@ -1,10 +1,8 @@
-XAccessible
 // HButton.cpp : 实现文件
 //
 
 #include "stdafx.h"
-#include "ScreenCapture.h"
-#include "HButton.h"
+#include "base/HButton.h"
 
 
 // HButton

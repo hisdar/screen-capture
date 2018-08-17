@@ -1,9 +1,8 @@
-XAccessible
 // SCToolBar.cpp : 实现文件
 //
 
 #include "stdafx.h"
-#include "ScreenCapture.h"
+#include "resource.h"
 #include "SCToolBar.h"
 #include "afxdialogex.h"
 #include "ScreenCaptureDlg.h"
