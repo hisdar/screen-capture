@@ -39,7 +39,7 @@ protected:
 private:
 	typedef CArray<SCDrawPanel *> SCDrawPanalArray;
 private:
-	CBitmap m_screenBmpMem;
+	CBitmap screenBmp;
 	
 	CBitmap m_userDrawBmp;
 

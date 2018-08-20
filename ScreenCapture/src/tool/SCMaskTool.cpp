@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "base/base-def.h"
 #include "tool/SCMaskTool.h"
 
 
@@ -34,6 +35,10 @@ BOOL SCMaskTool::DrawMetteRect(CDC *pCDC, int startX, int startY, int width, int
 	CBitmap metteBmp;
 
 	bRet = CreateCompatibleCDC(pCDC, &metteCDC, &metteBmp);
+	if (!bRet) {
+		SCDbg("CreateCompatibleCDC fail\n");
+		return bRet;
+	}
 
 	COLORREF colorREF = RGB(0, 0, 0);
 	metteCDC.FillSolidRect(0, 0, width, height, colorREF);
@@ -45,6 +50,11 @@ BOOL SCMaskTool::DrawMetteRect(CDC *pCDC, int startX, int startY, int width, int
 	bf.AlphaFormat = 0;
 	bf.SourceConstantAlpha = 90;
 	bRet = pCDC->AlphaBlend(startX, startY, width, height, &metteCDC, 0, 0, width, height, bf);
+	if (!bRet) {
+		SCDbg("AlphaBlend fail: target point[%d, %d], target size:[%d, %d] \n", startX, startY, width, height);
+		SCDbg("AlphaBlend fail: src point[%d, %d], src size:[%d, %d] \n", startX, startY, width, height);
+		return bRet;
+	}
 
 	metteBmp.DeleteObject();
 	metteCDC.DeleteDC();

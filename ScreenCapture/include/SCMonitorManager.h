@@ -11,6 +11,7 @@ public:
 	virtual ~SCMonitorManager();
 
 	BOOL GetMonitors(SCMonitorArray &array);
+	BOOL GetMonitor(HMONITOR &monitor, int index);
 
 private:
 	static BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);

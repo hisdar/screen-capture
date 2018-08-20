@@ -11,7 +11,7 @@
 #include "tool/SCArrowTool.h"
 #include "SCTextTool.h"
 #include "tool/select/SCSelectTool.h"
-
+#include "SCMonitorManager.h"
 // SCEditor ¶Ô»°¿ò
 
 IMPLEMENT_DYNAMIC(SCDrawPanel, CDialogEx)
@@ -56,16 +56,12 @@ BEGIN_MESSAGE_MAP(SCDrawPanel, CDialogEx)
 	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
-BOOL SCDrawPanel::UpdateBaseCDC(CDC &cdc)
+BOOL SCDrawPanel::UpdateBaseImage(CImage &srcImage)
 {
 	int ret = FALSE;
 
-	ret = CopyCompatibleCDC(&cdc, &m_baseCDC, &m_baseBitmap);
-	if (!ret) {
-		return ret;
-	}
-
-	Invalidate();
+	srcImage.Save(L"D:\\UpdateBaseImage.bmp");
+	//Invalidate();
 
 	return TRUE;
 }
@@ -114,13 +110,13 @@ void SCDrawPanel::RemoveListener(SCDrawPanelListener *listener)
 }
 
 ////////////////////////////////////////////////////////////
-BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pCDC)
+BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 {
 	BOOL bRet = FALSE;
 
 	// 1. draw user draw
 	// 1.1 create user draw cdc based on screen cdc
-	CDC m_userDrawCDC;
+	/*CDC m_userDrawCDC;
 	CBitmap m_userDrawBmp;
 	bRet = CopyCompatibleCDC(&m_baseCDC, &m_userDrawCDC, &m_userDrawBmp);
 
@@ -133,26 +129,38 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pCDC)
 	bRet = CopyCompatibleCDC(&m_userDrawCDC, &wndCDCMem, &wndBmpMem);
 
 	// 3. draw rect on window cdc
-	int cx = pCDC->GetDeviceCaps(HORZRES);
-	int cy = pCDC->GetDeviceCaps(VERTRES);
+	int cx = pTagDC->GetDeviceCaps(HORZRES);
+	int cy = pTagDC->GetDeviceCaps(VERTRES);
+	SCDbg("tagDC size:[%d, %d\n]", cx, cy);
 
-	CRect windowRect;
-	GetClientRect(windowRect);
-
-	SCDbg("clientRect:[%d, %d, %d, %d]\n", windowRect.left, windowRect.top, windowRect.right, windowRect.bottom);
+	int wndDcWidth = wndCDCMem.GetDeviceCaps(HORZRES);
+	int wndDcHeight = wndCDCMem.GetDeviceCaps(VERTRES);
+	SCDbg("wndDcHeight size:[%d, %d\n]", wndDcWidth, cy);
 
 	// 4. draw selected area
 	//m_currentTool
+	SCDbg("start to draw current tool\n");
 	m_currentTool->GetView()->Draw(wndCDCMem);
 
 	// 5. copy window dc to window dc
-	bRet = pCDC->BitBlt(0, 0, cx, cy, &wndCDCMem, 0, 0, SRCCOPY);
+	bRet = pTagDC->BitBlt(0, 0, cx, cy, &wndCDCMem, 0, 0, SRCCOPY);
 	if (!bRet) {
 		MessageBox(_T("cDC->BitBlt fail"), _T("message"), MB_OK);
 	}
 	
 	wndBmpMem.DeleteObject();
-	wndCDCMem.DeleteDC();
+	wndCDCMem.DeleteDC();*/
+
+	// 3. draw rect on window cdc
+	int cx = pTagDC->GetDeviceCaps(HORZRES);
+	int cy = pTagDC->GetDeviceCaps(VERTRES);
+	SCDbg("tagDC size:[%d, %d\n]", cx, cy);
+
+	// 5. copy window dc to window dc
+	//bRet = pTagDC->BitBlt(0, 0, cx, cy, &m_baseImage, 0, 0, SRCCOPY);
+	if (!bRet) {
+		//MessageBox(_T("cDC->BitBlt fail"), _T("message"), MB_OK);
+	}
 
 	return TRUE;
 }
@@ -403,6 +411,19 @@ void SCDrawPanel::OnPaint()
 	DrawScreenCaptureResult(&dc);
 
 	//dc.BitBlt(0, 0, width, height, &m_baseCDC, 0, 0, SRCCOPY);
+	/*SCMonitorManager mgr;
+	HMONITOR monitor;
+	mgr.GetMonitor(monitor, 1);
+
+	SCMonitor m;
+	CString name = m.GetName();
+	
+	CDC screenDc;
+	screenDc.CreateDCW(name, NULL, NULL, NULL);
+	dc.BitBlt(0, 0, width, height, &screenDc, 0, 0, SRCCOPY);
+
+	SCDbg("width=%d, height=%d\n", width, height);*/
+
 }
 
 void SCDrawPanel::OnLButtonDown(UINT nFlags, CPoint point)

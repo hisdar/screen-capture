@@ -23,10 +23,7 @@ BOOL SCObject::CreateCompatibleCDC(CDC *pSrcCDC, CDC *pTagetCDC, CBitmap *pTarge
 	// get src cdc size
 	int cx = pSrcCDC->GetDeviceCaps(HORZRES);
 	int cy = pSrcCDC->GetDeviceCaps(VERTRES);
-
-	int phyWidth = pSrcCDC->GetDeviceCaps(HORZSIZE);
-	int phyHeight = pSrcCDC->GetDeviceCaps(VERTSIZE);
-	SCDbg("phyWidth=%d, phyHeight=%d\n", phyWidth, phyHeight);
+	SCDbg("width=%d, height=%d\n", cx, cy);
 
 	// create window dc memory copy
 	pTagetCDC->DeleteDC();
@@ -57,10 +54,6 @@ BOOL SCObject::CopyCompatibleCDC(CDC *pSrcCDC, CDC *pTagetCDC, CBitmap *pTargetB
 	}
 
 	// get src cdc size
-	int nHorz = pSrcCDC->GetDeviceCaps(LOGPIXELSX);
-	int nVert = pSrcCDC->GetDeviceCaps(LOGPIXELSY);
-	SCDbg("LOGPIXELSX=%d, LOGPIXELSY=%d\n", nHorz, nVert);
-
 	int cx = pSrcCDC->GetDeviceCaps(HORZRES);
 	int cy = pSrcCDC->GetDeviceCaps(VERTRES);
 	SCDbg("HORZRES=%d, VERTRES=%d\n", cx, cy);
@@ -74,6 +67,31 @@ BOOL SCObject::CopyCompatibleCDC(CDC *pSrcCDC, CDC *pTagetCDC, CBitmap *pTargetB
 		SCErr("wndCDCMem.BitBlt fail\n");
 		return FALSE;
 	}
+
+	return TRUE;
+}
+
+BOOL SCObject::SaveBmp(CDC &dc, LPCTSTR pszFileName)
+{
+	// get selected bit map
+	CBitmap *selectedBitmap = dc.GetCurrentBitmap();
+
+	// exchange bitmap to image
+	CImage selectedImage;
+	selectedImage.Attach((HBITMAP)selectedBitmap->GetSafeHandle());
+	
+	SCDbg("img size:%d, %d\n", selectedImage.GetWidth(), selectedImage.GetHeight());
+	selectedImage.Save(pszFileName, Gdiplus::ImageFormatBMP);
+	
+	return TRUE;
+}
+
+BOOL SCObject::DCToImage(CDC &dc, CImage &image)
+{
+	image.Destroy();
+
+	CBitmap *cBmp = dc.GetCurrentBitmap();
+	image.Attach((HBITMAP)cBmp->GetSafeHandle());
 
 	return TRUE;
 }

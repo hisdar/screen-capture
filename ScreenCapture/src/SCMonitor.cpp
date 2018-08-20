@@ -2,8 +2,8 @@
 #include "base/base-def.h"
 #include "SCMonitor.h"
 
-SCMonitor::SCMonitor()
-//: m_cdc(NULL)
+SCMonitor::SCMonitor(HMONITOR hMonitor)
+:m_hMonitor(hMonitor)
 {
 
 }
@@ -15,7 +15,7 @@ SCMonitor::SCMonitor(const SCMonitor &scMonitor)
 
 SCMonitor::~SCMonitor()
 {
-	//CHECK_DELETE(m_cdc);
+
 }
 
 void SCMonitor::operator=(const SCMonitor &scMonitor)
@@ -31,64 +31,50 @@ void SCMonitor::Copy(const SCMonitor &scMonitor)
 		return;
 	}
 
-	ret = Create(scMonitor.m_hMonitor);
-	if (!ret) {
-		SCErr("Create fail\n");
-	}
+	m_hMonitor = scMonitor.m_hMonitor;
 }
 
-CRect SCMonitor::GetRect()
-{
-	return m_rect;
-}
-
-CString SCMonitor::GetMonitorName(HMONITOR hMonitor)
+BOOL SCMonitor::GetScreenImage(CImage &image)
 {
 	BOOL ret = FALSE;
-
-	m_hMonitor = hMonitor;
 
 	MONITORINFOEX mi;
 	memset(&mi, 0x00, sizeof(mi));
 	mi.cbSize = sizeof(mi);
 
-	ret = GetMonitorInfo(hMonitor, &mi);
+	ret = GetMonitorInfo(m_hMonitor, &mi);
 	if (!ret) {
 		SCErr("GetMonitorInfo fail\n");
-		return L"";
+		return FALSE;
 	}
 
-	m_rect = mi.rcMonitor;
-
-	return CString(mi.szDevice);
-}
-
-BOOL SCMonitor::Create(const CString &monitorName)
-{
-	BOOL ret = FALSE;
-
-	m_name = monitorName;
-
-	//CHECK_DELETE(m_cdc);
-	//m_cdc = new CDC();
-	ret = m_cdc.CreateDC(monitorName, NULL, NULL, NULL);
+	CDC dc;
+	ret = dc.CreateDCW(mi.szDevice, NULL, NULL, NULL);
 	if (!ret) {
-		SCErr("m_cdc.CreateDC fail\n");
+		SCErr("create dc fail, device name:%s\n", mi.szDevice);
+		return FALSE;
+	}
+
+	CBitmap *selectedBitmap = dc.GetCurrentBitmap();
+
+	// exchange bitmap to image
+	CImage selectedImage;
+	selectedImage.Attach((HBITMAP)selectedBitmap->GetSafeHandle());
+
+	SCDbg("img size:%d, %d\n", selectedImage.GetWidth(), selectedImage.GetHeight());
+	selectedImage.Save(L"GetScreenImage-dc.bmp", Gdiplus::ImageFormatBMP);
+
+	//SaveBmp(dc, L"GetScreenImage-dc.bmp");
+
+	//ret = DCToImage(dc, image);
+	if (!ret) {
+		SCErr("DCToImage fail\n");
 		return ret;
 	}
 
+	//image.Save(L"GetScreenImage.bmp");
 	return TRUE;
 }
 
-BOOL SCMonitor::Create(HMONITOR hMonitor)
-{
-	CString name = GetMonitorName(hMonitor);
 
-	return Create(name);
-}
-
-BOOL SCMonitor::GetScreenCDC(CDC &cdc, CBitmap &bmp)
-{
-	return CopyCompatibleCDC(&m_cdc, &cdc, &bmp);
-}
 

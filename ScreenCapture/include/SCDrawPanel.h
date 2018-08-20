@@ -39,7 +39,7 @@ private:
 	typedef CArray<SCDrawPanelListener *> SCDrawPanelListenerArray;
 
 public:
-	BOOL UpdateBaseCDC(CDC &cdc);
+	BOOL UpdateBaseImage(CImage &img);
 	void SetState(int state);
 	void SetEditMode(int editMode);
 	int  GetRectSize();
@@ -47,7 +47,7 @@ public:
 	void RemoveListener(SCDrawPanelListener *listener);
 
 private:
-	CDC m_baseCDC;
+	CDC m_baseImage;
 	CBitmap m_baseBitmap;
 
 	int  m_resizeDirection;

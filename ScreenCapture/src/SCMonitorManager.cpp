@@ -19,12 +19,35 @@ BOOL SCMonitorManager::GetMonitors(SCMonitorArray &array)
 
 	//m_monitorArray.RemoveAll();
 
+//	EnumDisplaySettings
+//	EnumDisplayDevices
 	ret = EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&array);
 	if (!ret) {
 		SCErr("EnumDisplayMonitors fail, err:%d\n", GetLastError());
 		return ret;
 	}
 	
+	return TRUE;
+}
+
+BOOL SCMonitorManager::GetMonitor(HMONITOR &monitor, int index)
+{
+	int ret = FALSE;
+
+	SCMonitorArray array;
+	ret = GetMonitors(array);
+	if (!ret) {
+		SCErr("get monitors fail\n");
+		return ret;
+	}
+
+	if (index >= array.GetSize()) {
+		SCErr("index out of bounds, index=%d, array length=%d\n", index, array.GetSize());
+		return FALSE;
+	}
+
+	monitor = array.GetAt(index);
+
 	return TRUE;
 }
 
@@ -37,18 +60,9 @@ BOOL SCMonitorManager::MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT
 		return TRUE;
 	}
 
-	SCDbg("monitor rect:[%d, %d, %d, %d]\n", lprcMonitor->left, lprcMonitor->top, lprcMonitor->right, lprcMonitor->bottom);
-	SCMonitorArray *self = (SCMonitorArray *)dwData;
+	SCMonitorArray *monitorArray = (SCMonitorArray *)dwData;
 
-	SCMonitor scMonitor;
-	ret = scMonitor.Create(hMonitor);
-	if (!ret) {
-		SCErr("scMonitor.Create fail\n");
-		return TRUE; // 这里要返回TRUE， 返回FALSE标识停止枚举
-	}
-
-	//self->Add(scMonitor);
-	self->Add(hMonitor);
+	monitorArray->Add(hMonitor);
 
 	return TRUE;
 }

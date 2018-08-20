@@ -141,8 +141,6 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 			CHECK_DELETE(m_dp);
 		}
 
-		CDC m_screenCDCMem;
-		CDC m_userDrawCDC;
 		SCMonitorArray mArray;
 		SCMonitorManager mMgr;
 		ret = mMgr.GetMonitors(mArray);
@@ -150,27 +148,25 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 			SCErr("GetMonitors fail\n");
 		}
 
-		for (unsigned i = 0; i < mArray.GetSize(); i++) {
-			HMONITOR hMonitor = mArray.GetAt(i);
-			SCMonitor m;
-			m.Create(hMonitor);
+		for (int i = 1; i < mArray.GetSize(); i++) {
+			SCMonitor m(mArray.GetAt(i));
 
-			ret = m.GetScreenCDC(m_screenCDCMem, m_screenBmpMem);
+			CImage screenImage;
+			ret = m.GetScreenImage(screenImage);
 			if (!ret) {
 				SCErr("GetScreenCDC fail\n");
 				continue;
 			}
 
-			CRect rect = m.GetRect();
+			screenImage.Save(L"OnHotKey.bmp");
 
 			SCDrawPanel *m_dp = new SCDrawPanel();
 			m_dp->Create(IDD_DIALOG_SC_DRAW_PANEL);
-			m_dp->UpdateBaseCDC(m_screenCDCMem);
+			m_dp->UpdateBaseImage(screenImage);
 			m_dp->SetState(SCREEN_CAPTURE_STATE_START);
 			m_dp->AddListener(this);
 
-			SCDbg("show at:[%d, %d, %d, %d]\n", rect.left, rect.top, rect.right, rect.bottom);
-			m_dp->SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_SHOWWINDOW);
+			m_dp->SetWindowPos(&wndTopMost, 0, 0, screenImage.GetWidth(), screenImage.GetHeight(), SWP_SHOWWINDOW);
 			m_dp->ShowWindow(SW_SHOW);
 
 			m_dpArray.Add(m_dp);
