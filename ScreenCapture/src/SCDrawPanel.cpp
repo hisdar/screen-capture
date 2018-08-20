@@ -56,12 +56,17 @@ BEGIN_MESSAGE_MAP(SCDrawPanel, CDialogEx)
 	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
-BOOL SCDrawPanel::UpdateBaseImage(CImage &srcImage)
+BOOL SCDrawPanel::UpdateBaseImage(SCDC &scDC)
 {
 	int ret = FALSE;
 
-	srcImage.Save(L"D:\\UpdateBaseImage.bmp");
-	//Invalidate();
+	ret = m_scDC.Create(scDC.GetDC());
+	if (!ret) {
+		SCDbg("scdc create fail\n");
+		return FALSE;
+	}
+
+	Invalidate();
 
 	return TRUE;
 }
@@ -116,9 +121,9 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 
 	// 1. draw user draw
 	// 1.1 create user draw cdc based on screen cdc
-	/*CDC m_userDrawCDC;
+	CDC m_userDrawCDC;
 	CBitmap m_userDrawBmp;
-	bRet = CopyCompatibleCDC(&m_baseCDC, &m_userDrawCDC, &m_userDrawBmp);
+	bRet = CopyCompatibleCDC(m_scDC.GetDC(), &m_userDrawCDC, &m_userDrawBmp);
 
 	// 1.2 draw user darw
 	bRet = DrawUserDraw(&m_userDrawCDC);
@@ -149,18 +154,18 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 	}
 	
 	wndBmpMem.DeleteObject();
-	wndCDCMem.DeleteDC();*/
+	wndCDCMem.DeleteDC();
 
-	// 3. draw rect on window cdc
+	/*// 3. draw rect on window cdc
 	int cx = pTagDC->GetDeviceCaps(HORZRES);
 	int cy = pTagDC->GetDeviceCaps(VERTRES);
-	SCDbg("tagDC size:[%d, %d\n]", cx, cy);
+	//SCDbg("tagDC size:[%d, %d\n]", cx, cy);
 
 	// 5. copy window dc to window dc
-	//bRet = pTagDC->BitBlt(0, 0, cx, cy, &m_baseImage, 0, 0, SRCCOPY);
+	bRet = pTagDC->BitBlt(0, 0, cx, cy, m_scDC.GetDC(), 0, 0, SRCCOPY);
 	if (!bRet) {
-		//MessageBox(_T("cDC->BitBlt fail"), _T("message"), MB_OK);
-	}
+		SCErr("BitBlt fail\n");
+	}*/
 
 	return TRUE;
 }

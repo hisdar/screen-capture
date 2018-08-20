@@ -151,10 +151,12 @@
     <ClInclude Include="include\tool\select\SCSelectToolView.h" />
     <ClInclude Include="include\SCTextTool.h" />
     <ClInclude Include="include\tool\select\SCSelectTool.h" />
+    <ClInclude Include="include\base\SCDC.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\base\SCDC.cpp" />
     <ClCompile Include="src\tool\select\SCSelectTool.cpp" />
     <ClCompile Include="src\SCDrawPanel.cpp" />
     <ClCompile Include="src\tool\select\SCSelectToolController.cpp" />

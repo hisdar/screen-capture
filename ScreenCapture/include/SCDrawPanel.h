@@ -6,6 +6,7 @@
 #include "UserDraw.h"
 
 #include "tool/base/SCBaseTool.h"
+#include "base/SCDC.h"
 
 class SCDrawPanel;
 
@@ -39,7 +40,7 @@ private:
 	typedef CArray<SCDrawPanelListener *> SCDrawPanelListenerArray;
 
 public:
-	BOOL UpdateBaseImage(CImage &img);
+	BOOL UpdateBaseImage(SCDC &scDC);
 	void SetState(int state);
 	void SetEditMode(int editMode);
 	int  GetRectSize();
@@ -47,8 +48,7 @@ public:
 	void RemoveListener(SCDrawPanelListener *listener);
 
 private:
-	CDC m_baseImage;
-	CBitmap m_baseBitmap;
+	SCDC m_scDC;
 
 	int  m_resizeDirection;
 	int  m_screenCaptureState;

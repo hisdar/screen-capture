@@ -88,10 +88,25 @@ BOOL SCObject::SaveBmp(CDC &dc, LPCTSTR pszFileName)
 
 BOOL SCObject::DCToImage(CDC &dc, CImage &image)
 {
-	image.Destroy();
+	BOOL ret = FALSE;
+
+	CImage bmpImage;
 
 	CBitmap *cBmp = dc.GetCurrentBitmap();
-	image.Attach((HBITMAP)cBmp->GetSafeHandle());
+	bmpImage.Attach((HBITMAP)cBmp->GetSafeHandle());
+
+	bmpImage.Save(L"DCToImage.bmp");
+
+	image.Destroy();
+	ret = image.Create(bmpImage.GetWidth(), bmpImage.GetHeight(), bmpImage.GetBPP());
+	if (!ret) {
+		SCErr("image.Create\n");
+		return ret;
+	}
+
+	ret = bmpImage.Draw(image.GetDC(), 0, 0);
+	
+	image.ReleaseDC();
 
 	return TRUE;
 }

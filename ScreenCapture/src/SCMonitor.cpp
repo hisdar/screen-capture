@@ -34,7 +34,7 @@ void SCMonitor::Copy(const SCMonitor &scMonitor)
 	m_hMonitor = scMonitor.m_hMonitor;
 }
 
-BOOL SCMonitor::GetScreenImage(CImage &image)
+BOOL SCMonitor::GetScreenImage(SCDC &scDC)
 {
 	BOOL ret = FALSE;
 
@@ -49,30 +49,20 @@ BOOL SCMonitor::GetScreenImage(CImage &image)
 	}
 
 	CDC dc;
-	ret = dc.CreateDCW(mi.szDevice, NULL, NULL, NULL);
+	dc.CreateDCW(mi.szDevice, NULL, NULL, NULL);
 	if (!ret) {
 		SCErr("create dc fail, device name:%s\n", mi.szDevice);
 		return FALSE;
 	}
 
-	CBitmap *selectedBitmap = dc.GetCurrentBitmap();
-
-	// exchange bitmap to image
-	CImage selectedImage;
-	selectedImage.Attach((HBITMAP)selectedBitmap->GetSafeHandle());
-
-	SCDbg("img size:%d, %d\n", selectedImage.GetWidth(), selectedImage.GetHeight());
-	selectedImage.Save(L"GetScreenImage-dc.bmp", Gdiplus::ImageFormatBMP);
-
-	//SaveBmp(dc, L"GetScreenImage-dc.bmp");
-
-	//ret = DCToImage(dc, image);
+	ret = scDC.Create(dc);
 	if (!ret) {
-		SCErr("DCToImage fail\n");
-		return ret;
+		SCErr("scDC create fail\n");
+		return FALSE;
 	}
 
-	//image.Save(L"GetScreenImage.bmp");
+	scDC.Save(L"GetScreenImage.bmp");
+
 	return TRUE;
 }
 
