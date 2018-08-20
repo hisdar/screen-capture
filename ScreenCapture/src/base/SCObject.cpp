@@ -77,11 +77,11 @@ BOOL SCObject::SaveBmp(CDC &dc, LPCTSTR pszFileName)
 	CBitmap *selectedBitmap = dc.GetCurrentBitmap();
 
 	// exchange bitmap to image
-	CImage selectedImage;
-	selectedImage.Attach((HBITMAP)selectedBitmap->GetSafeHandle());
+	CImage image;
+	image.Attach((HBITMAP)selectedBitmap->GetSafeHandle());
 	
-	SCDbg("img size:%d, %d\n", selectedImage.GetWidth(), selectedImage.GetHeight());
-	selectedImage.Save(pszFileName, Gdiplus::ImageFormatBMP);
+	SCDbg("img size:%d, %d\n", image.GetWidth(), image.GetHeight());
+	image.Save(pszFileName, Gdiplus::ImageFormatBMP);
 	
 	return TRUE;
 }
