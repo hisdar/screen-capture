@@ -121,41 +121,32 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 
 	// 1. draw user draw
 	// 1.1 create user draw cdc based on screen cdc
-	CDC m_userDrawCDC;
-	CBitmap m_userDrawBmp;
-	bRet = CopyCompatibleCDC(m_scDC.GetDC(), &m_userDrawCDC, &m_userDrawBmp);
+	SCDC usreDrawSCDC(m_scDC.GetDC());
 
 	// 1.2 draw user darw
-	bRet = DrawUserDraw(&m_userDrawCDC);
-
+	bRet = DrawUserDraw(&usreDrawSCDC);
+	if (!bRet) {
+		SCErr("DrawUserDrawfail\n");
+		return FALSE;
+	}
 	// 2. copy user draw to wnndow cdc
-	CDC wndCDCMem;
-	CBitmap wndBmpMem;
-	bRet = CopyCompatibleCDC(&m_userDrawCDC, &wndCDCMem, &wndBmpMem);
+	SCDC wndSCDC(usreDrawSCDC.GetDC());
 
 	// 3. draw rect on window cdc
 	int cx = pTagDC->GetDeviceCaps(HORZRES);
 	int cy = pTagDC->GetDeviceCaps(VERTRES);
-	SCDbg("tagDC size:[%d, %d\n]", cx, cy);
-
-	int wndDcWidth = wndCDCMem.GetDeviceCaps(HORZRES);
-	int wndDcHeight = wndCDCMem.GetDeviceCaps(VERTRES);
-	SCDbg("wndDcHeight size:[%d, %d\n]", wndDcWidth, cy);
 
 	// 4. draw selected area
 	//m_currentTool
 	SCDbg("start to draw current tool\n");
-	m_currentTool->GetView()->Draw(wndCDCMem);
+	m_currentTool->GetView()->Draw(*wndSCDC.GetDC());
 
 	// 5. copy window dc to window dc
-	bRet = pTagDC->BitBlt(0, 0, cx, cy, &wndCDCMem, 0, 0, SRCCOPY);
+	bRet = pTagDC->StretchBlt(0, 0, cx, cy, wndSCDC.GetDC(), 0, 0, wndSCDC.GetWidth(), wndSCDC.GetHeight(), SRCCOPY);
 	if (!bRet) {
 		MessageBox(_T("cDC->BitBlt fail"), _T("message"), MB_OK);
 	}
 	
-	wndBmpMem.DeleteObject();
-	wndCDCMem.DeleteDC();
-
 	/*// 3. draw rect on window cdc
 	int cx = pTagDC->GetDeviceCaps(HORZRES);
 	int cy = pTagDC->GetDeviceCaps(VERTRES);
@@ -170,7 +161,7 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 	return TRUE;
 }
 
-BOOL SCDrawPanel::DrawUserDraw(CDC * pCDC)
+BOOL SCDrawPanel::DrawUserDraw(SCDC * pCDC)
 {
 	/*if (m_userDrawArray.GetSize() <= 0) {
 	return TRUE;

@@ -3,6 +3,7 @@ class SCDC
 {
 public:
 	SCDC();
+	SCDC(CDC *dc);
 	SCDC(CDC &dc);
 	virtual ~SCDC();
 

@@ -8,7 +8,7 @@ SCDC::SCDC()
 	m_height = 0;
 }
 
-SCDC::SCDC(CDC &dc)
+SCDC::SCDC(CDC *dc)
 {
 	BOOL ret = FALSE;
 
@@ -22,6 +22,19 @@ SCDC::SCDC(CDC &dc)
 	}
 }
 
+SCDC::SCDC(CDC &dc)
+{
+	BOOL ret = FALSE;
+
+	m_width = 0;
+	m_height = 0;
+
+	ret = Create(dc);
+	if (!ret) {
+		SCErr("Create SCDC fail\n");
+		return;
+	}
+}
 
 SCDC::~SCDC()
 {

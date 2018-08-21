@@ -85,7 +85,7 @@ private:
 	BOOL GetEditModeCursorIcon(CPoint *pPoint, LONG *cursorIcon);
 	BOOL DrawInformation(CDC * pCDC);
 	BOOL DrawScreenCaptureResult(CDC * pCDC);
-	BOOL DrawUserDraw(CDC * pCDC);
+	BOOL DrawUserDraw(SCDC * pCDC);
 
 public:
 	afx_msg void OnPaint();

@@ -93,7 +93,13 @@ BOOL SCSelectToolView::Draw(CDC &cdc)
 {
 	int ret = FALSE;
 
-	m_wnd->GetWindowRect(m_rect);
+	int cx = cdc.GetDeviceCaps(HORZRES);
+	int cy = cdc.GetDeviceCaps(VERTRES);
+
+	m_rect.left - 0;
+	m_rect.top = 0;
+	m_rect.right = cx;
+	m_rect.bottom = cy;
 
 	ret = DrawMask(cdc);
 	if (!ret) {

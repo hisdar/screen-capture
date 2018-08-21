@@ -13,6 +13,7 @@ public:
 
 	void operator=(const SCMonitor &scMonitor);
 	BOOL GetScreenImage(SCDC &scDC);
+	BOOL GetMonitorRect(CRect &rect);
 
 private:
 	void Copy(const SCMonitor &scMonitor);

@@ -21,6 +21,7 @@ BOOL SCMonitorManager::GetMonitors(SCMonitorArray &array)
 
 //	EnumDisplaySettings
 //	EnumDisplayDevices
+	
 	ret = EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&array);
 	if (!ret) {
 		SCErr("EnumDisplayMonitors fail, err:%d\n", GetLastError());

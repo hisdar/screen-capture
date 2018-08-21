@@ -148,7 +148,10 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 			SCErr("GetMonitors fail\n");
 		}
 
-		SCMonitor m(mArray.GetAt(0));
+		CPoint currentPoint;
+		GetCursorPos(&currentPoint);
+		HMONITOR hMonitor = MonitorFromPoint(currentPoint, MONITOR_DEFAULTTONEAREST);
+		SCMonitor m(hMonitor);
 
 		SCDC screenSCDC;
 		ret = m.GetScreenImage(screenSCDC);
@@ -156,15 +159,22 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 			SCErr("GetScreenCDC fail\n");
 			return;
 		}
-
+		
 		SCDrawPanel *m_dp = new SCDrawPanel();
 		m_dp->Create(IDD_DIALOG_SC_DRAW_PANEL);
 		m_dp->UpdateBaseImage(screenSCDC);
 		m_dp->SetState(SCREEN_CAPTURE_STATE_START);
 		m_dp->AddListener(this);
 
-		m_dp->SetWindowPos(&wndTopMost, 0, 0, screenSCDC.GetWidth(), screenSCDC.GetHeight(), SWP_SHOWWINDOW);
+		CRect monitorRect;
+		m.GetMonitorRect(monitorRect);
+
+		m_dp->SetWindowPos(&wndTopMost, monitorRect.left, monitorRect.top, monitorRect.Width(), monitorRect.Height(), SWP_SHOWWINDOW);
 		m_dp->ShowWindow(SW_SHOW);
+
+
+		CRect screenRect;
+		m_dp->GetWindowRect(screenRect);
 
 		//m_dpArray.Add(m_dp);
 		

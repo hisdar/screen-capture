@@ -34,6 +34,25 @@ void SCMonitor::Copy(const SCMonitor &scMonitor)
 	m_hMonitor = scMonitor.m_hMonitor;
 }
 
+BOOL SCMonitor::GetMonitorRect(CRect &rect)
+{
+	BOOL ret = FALSE;
+
+	MONITORINFOEX mi;
+	memset(&mi, 0x00, sizeof(mi));
+	mi.cbSize = sizeof(mi);
+
+	ret = GetMonitorInfo(m_hMonitor, &mi);
+	if (!ret) {
+		SCErr("GetMonitorInfo fail\n");
+		return FALSE;
+	}
+
+	rect = mi.rcMonitor;
+
+	return TRUE;
+}
+
 BOOL SCMonitor::GetScreenImage(SCDC &scDC)
 {
 	BOOL ret = FALSE;
