@@ -133,16 +133,31 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 	SCDC wndSCDC(usreDrawSCDC.GetDC());
 
 	// 3. draw rect on window cdc
-	int cx = pTagDC->GetDeviceCaps(HORZRES);
-	int cy = pTagDC->GetDeviceCaps(VERTRES);
+	CSize wndBmpSize, dialogBmpSize;
+	bRet = GetCBitmapSize(wndSCDC.GetDC(), wndBmpSize);
+	GetCBitmapSize(pTagDC, dialogBmpSize);
 
+	int cxDialog = pTagDC->GetDeviceCaps(HORZRES);
+	int cyDialog = pTagDC->GetDeviceCaps(VERTRES);
+
+	int cxWnd = wndSCDC.GetDC()->GetDeviceCaps(HORZRES);
+	int cyWnd = wndSCDC.GetDC()->GetDeviceCaps(VERTRES);
+
+	CRect dialogRect;
+	GetWindowRect(&dialogRect);
+
+	int cx = cxDialog;
+	int cy = cyDialog;
 	// 4. draw selected area
 	//m_currentTool
-	SCDbg("start to draw current tool\n");
+	SCDbg("dialog dc size:%d, %d, dialog bmp size:%d, %d\n", cxDialog, cyDialog, dialogBmpSize.cx, dialogBmpSize.cy);
+	SCDbg("scdc dc size:%d, %d, scdc bmp size:%d, %d\n", cxWnd, cyWnd, wndBmpSize.cx, wndBmpSize.cy);
+	SCDbg("dialog rect:%d, %d, %d, %d\n", dialogRect.left, dialogRect.top, dialogRect.right, dialogRect.bottom);
+
 	m_currentTool->GetView()->Draw(*wndSCDC.GetDC());
 
 	// 5. copy window dc to window dc
-	bRet = pTagDC->StretchBlt(0, 0, cx, cy, wndSCDC.GetDC(), 0, 0, wndSCDC.GetWidth(), wndSCDC.GetHeight(), SRCCOPY);
+	bRet = pTagDC->StretchBlt(0, 0, dialogBmpSize.cx, dialogBmpSize.cy, wndSCDC.GetDC(), 0, 0, wndBmpSize.cx, wndBmpSize.cy, SRCCOPY);
 	if (!bRet) {
 		MessageBox(_T("cDC->BitBlt fail"), _T("message"), MB_OK);
 	}

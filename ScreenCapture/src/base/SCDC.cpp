@@ -51,17 +51,12 @@ BOOL SCDC::Create(CDC *dc)
 		return FALSE;
 	}
 
-	CBitmap *dcBmp = dc->GetCurrentBitmap();
-	if (dcBmp == NULL) {
-		SCErr("CBitmap object not selected\n");
+	CSize dcBmpSize;
+	ret = GetCBitmapSize(dc, dcBmpSize);
+	if (!ret) {
+		SCErr("GetCBitmapSize fail\n");
 		return FALSE;
 	}
-
-	CImage dcImage;
-	dcImage.Attach((HBITMAP)dcBmp->GetSafeHandle());
-
-	m_width = dcImage.GetWidth();
-	m_height = dcImage.GetHeight();
 
 	m_dc.DeleteDC();
 	ret = m_dc.CreateCompatibleDC(dc);
@@ -71,7 +66,7 @@ BOOL SCDC::Create(CDC *dc)
 	}
 
 	m_bmp.DeleteObject();
-	ret = m_bmp.CreateCompatibleBitmap(dc, m_width, m_height);
+	ret = m_bmp.CreateCompatibleBitmap(dc, dcBmpSize.cx, dcBmpSize.cy);
 	if (!ret) {
 		SCErr("create bitmap fail\n");
 		return FALSE;
@@ -79,7 +74,7 @@ BOOL SCDC::Create(CDC *dc)
 
 	m_dc.SelectObject(m_bmp);
 
-	ret = m_dc.BitBlt(0, 0, m_width, m_height, dc, 0, 0, SRCCOPY);
+	ret = m_dc.BitBlt(0, 0, dcBmpSize.cx, dcBmpSize.cy, dc, 0, 0, SRCCOPY);
 
 	return ret;
 }
@@ -118,10 +113,11 @@ CBitmap *SCDC::GetBitMap()
 
 int SCDC::GetWidth()
 {
-	return m_width;
+	return m_dc.GetDeviceCaps(HORZRES);
+	
 }
 
 int SCDC::GetHeight()
 {
-	return m_height;
+	return m_dc.GetDeviceCaps(VERTRES);;
 }

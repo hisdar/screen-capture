@@ -12,7 +12,7 @@ public:
 	virtual ~SCMonitor();
 
 	void operator=(const SCMonitor &scMonitor);
-	BOOL GetScreenImage(SCDC &scDC);
+	BOOL GetMonitorSCDC(SCDC &scDC);
 	BOOL GetMonitorRect(CRect &rect);
 
 private:

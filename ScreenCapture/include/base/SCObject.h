@@ -8,6 +8,7 @@ public:
 	BOOL CreateCompatibleCDC(CDC *pSrcCDC, CDC *pTagetCDC, CBitmap *pTargetBmp);
 	BOOL CopyCompatibleCDC(CDC *pSrcCDC, CDC *pTagetCDC, CBitmap *pTargetBmp);
 	BOOL DCToImage(CDC &dc, CImage &image);
+	BOOL GetCBitmapSize(CDC *pCDC, CSize &size);
 
 	static BOOL SaveBmp(CDC &dc, LPCTSTR pszFileName);	
 };

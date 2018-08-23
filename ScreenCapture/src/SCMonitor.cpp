@@ -53,36 +53,57 @@ BOOL SCMonitor::GetMonitorRect(CRect &rect)
 	return TRUE;
 }
 
-BOOL SCMonitor::GetScreenImage(SCDC &scDC)
+BOOL SCMonitor::GetMonitorSCDC(SCDC &scDC)
 {
-	BOOL ret = FALSE;
+	int ret = FALSE;
 
 	MONITORINFOEX mi;
-	memset(&mi, 0x00, sizeof(mi));
-	mi.cbSize = sizeof(mi);
-
+	mi.cbSize = sizeof(MONITORINFOEX);
 	ret = GetMonitorInfo(m_hMonitor, &mi);
 	if (!ret) {
 		SCErr("GetMonitorInfo fail\n");
 		return FALSE;
 	}
 
+	DEVMODE devMode;
+	ret = EnumDisplaySettings(mi.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
+	if (!ret) {
+		SCErr("EnumDisplaySettings fail\n");
+		return FALSE;
+	}
+
 	CDC dc;
-	dc.CreateDCW(mi.szDevice, NULL, NULL, NULL);
+	ret = dc.CreateDCW(mi.szDevice, NULL, NULL, NULL);
 	if (!ret) {
-		SCErr("create dc fail, device name:%s\n", mi.szDevice);
+		SCErr("dc.CreateDCW fail\n");
 		return FALSE;
 	}
 
-	ret = scDC.Create(dc);
+	CDC *monitorDC = scDC.GetDC();
+	monitorDC->DeleteDC();
+	ret = monitorDC->CreateCompatibleDC(&dc);
 	if (!ret) {
-		SCErr("scDC create fail\n");
+		SCErr("monitorDC->CreateCompatibleDC fail\n");
 		return FALSE;
 	}
 
-	scDC.Save(L"GetScreenImage.bmp");
+	CBitmap *monitorBmp = scDC.GetBitMap();
+	monitorBmp->DeleteObject();
+	ret = monitorBmp->CreateCompatibleBitmap(&dc, devMode.dmPelsWidth, devMode.dmPelsHeight);
+	if (!ret) {
+		SCErr("monitorBmp->CreateCompatibleBitmap fail\n");
+		return FALSE;
+	}
 
-	return TRUE;
+	monitorDC->SelectObject(monitorBmp);
+
+	CSize dcSize(dc.GetDeviceCaps(HORZRES), dc.GetDeviceCaps(VERTRES));
+	int offsetX = devMode.dmPosition.x - mi.rcMonitor.left;
+	int offsetY = devMode.dmPosition.y - mi.rcMonitor.top;
+
+	ret = monitorDC->BitBlt(0, 0, devMode.dmPelsWidth, devMode.dmPelsHeight, &dc, offsetX, offsetY, SRCCOPY);
+
+	return ret;
 }
 
 

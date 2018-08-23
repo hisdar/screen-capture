@@ -110,3 +110,26 @@ BOOL SCObject::DCToImage(CDC &dc, CImage &image)
 
 	return TRUE;
 }
+
+BOOL SCObject::GetCBitmapSize(CDC *pCDC, CSize &size)
+{
+	int ret = FALSE;
+
+	CBitmap *dcBitmap = pCDC->GetCurrentBitmap();
+	if (dcBitmap == NULL) {
+		SCErr("dc GetCurrentBitmap is NULL\n");
+		return FALSE;
+	}
+
+	BITMAP dcBMP;
+	ret = dcBitmap->GetBitmap(&dcBMP);
+	if (!ret) {
+		SCErr("dcBitmap->GetBitmap fail\n");
+		return FALSE;
+	}
+
+	size.cx = dcBMP.bmWidth;
+	size.cy = dcBMP.bmHeight;
+
+	return TRUE;
+}

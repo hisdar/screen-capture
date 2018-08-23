@@ -1,5 +1,8 @@
 #pragma once
-class SCDC
+
+#include "base/SCObject.h"
+
+class SCDC : public SCObject
 {
 public:
 	SCDC();

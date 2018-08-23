@@ -135,46 +135,32 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 
 	if (nHotKeyId == HORT_KEY_ID_CTRL_ALT_A) {
 
-		for (; m_dpArray.GetSize() > 0;) {
-			SCDrawPanel *m_dp = m_dpArray.GetAt(0);
-			m_dpArray.RemoveAt(0);
-			CHECK_DELETE(m_dp);
-		}
+		CPoint curPoint;
+		GetCursorPos(&curPoint);
+		HMONITOR hMonitor = MonitorFromPoint(curPoint, MONITOR_DEFAULTTONEAREST);
 
-		SCMonitorArray mArray;
-		SCMonitorManager mMgr;
-		ret = mMgr.GetMonitors(mArray);
-		if (!ret) {
-			SCErr("GetMonitors fail\n");
-		}
+		SCMonitor monitor(hMonitor);
 
-		CPoint currentPoint;
-		GetCursorPos(&currentPoint);
-		HMONITOR hMonitor = MonitorFromPoint(currentPoint, MONITOR_DEFAULTTONEAREST);
-		SCMonitor m(hMonitor);
+		SCDC scDC;
+		monitor.GetMonitorSCDC(scDC);
 
-		SCDC screenSCDC;
-		ret = m.GetScreenImage(screenSCDC);
-		if (!ret) {
-			SCErr("GetScreenCDC fail\n");
-			return;
-		}
+		scDC.Save(L"scDC.bmp");
+		SCDbg("scdc size:%d, %d\n", scDC.GetWidth(), scDC.GetHeight());
+
+		/////////////////////////////////////////////////////////
+		// 似乎必须要有下面的两句话，才能每次都复制到数据，不知道是为啥
 		
 		SCDrawPanel *m_dp = new SCDrawPanel();
 		m_dp->Create(IDD_DIALOG_SC_DRAW_PANEL);
-		m_dp->UpdateBaseImage(screenSCDC);
+		m_dp->UpdateBaseImage(scDC);
 		m_dp->SetState(SCREEN_CAPTURE_STATE_START);
 		m_dp->AddListener(this);
 
 		CRect monitorRect;
-		m.GetMonitorRect(monitorRect);
+		monitor.GetMonitorRect(monitorRect);
 
 		m_dp->SetWindowPos(&wndTopMost, monitorRect.left, monitorRect.top, monitorRect.Width(), monitorRect.Height(), SWP_SHOWWINDOW);
 		m_dp->ShowWindow(SW_SHOW);
-
-
-		CRect screenRect;
-		m_dp->GetWindowRect(screenRect);
 
 		//m_dpArray.Add(m_dp);
 		
@@ -506,11 +492,11 @@ BOOL CScreenCaptureDlg::DrawUserDrawText(CDC * pCDC, CUserDraw * pUserDraw)
 void CScreenCaptureDlg::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	//CDC *pCDC = &m_userDrawCDC;//GetWindowDC();
-	CDC *pCDC = NULL;
-	pCDC->SetBkMode(TRANSPARENT);
+	//CDC *pCDC = NULL;
+	//pCDC->SetBkMode(TRANSPARENT);
 
-	TEXTMETRIC tm;
-	pCDC->GetTextMetrics(&tm);
+	//TEXTMETRIC tm;
+	//pCDC->GetTextMetrics(&tm);
 	/*if (0x0d == nChar) {
 		m_strLine.Empty();
 		m_ptOrigin.y += tm.tmHeight;
