@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "tool/select/SCSelectTool.h"
 
-
 SCSelectTool::SCSelectTool(CWnd *wnd)
 : m_view(wnd)
 , m_ctrl(&m_view)

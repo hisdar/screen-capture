@@ -20,7 +20,7 @@ BOOL SCRectangleTool::Draw(CDC &cdc)
 	g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 
 	Gdiplus::Color gColor(GetRValue(m_color), GetGValue(m_color), GetBValue(m_color));
-	Gdiplus::Pen gRectPen(gColor, m_size);
+	Gdiplus::Pen gRectPen(gColor, (Gdiplus::REAL)m_size);
 
 	g.DrawRectangle(&gRectPen, m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height());
 

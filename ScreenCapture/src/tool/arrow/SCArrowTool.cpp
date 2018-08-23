@@ -19,7 +19,7 @@ BOOL SCArrowTool::Draw(CDC &cdc)
 	g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 
 	Gdiplus::Color gColor(GetRValue(m_color), GetGValue(m_color), GetBValue(m_color));
-	Gdiplus::Pen gArrowPen(gColor, m_size);
+	Gdiplus::Pen gArrowPen(gColor, (Gdiplus::REAL)m_size);
 
 	CPoint startPoint(m_rect.left, m_rect.top);
 	CPoint endPoint(m_rect.right, m_rect.bottom);

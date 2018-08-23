@@ -62,7 +62,7 @@ int  SCSelectToolView::IsPointInResizeButton(CPoint &point)
 	ResizeButtonRects rbRects;
 	GetResizeButtonRects(rbRects);
 
-	for (unsigned i = 0; i < rbRects.GetSize(); i++) {
+	for (int i = 0; i < rbRects.GetSize(); i++) {
 		if (rbRects[i + 1].PtInRect(point)) {
 			return i + 1;
 		}
@@ -96,7 +96,7 @@ BOOL SCSelectToolView::Draw(CDC &cdc)
 	int cx = cdc.GetDeviceCaps(HORZRES);
 	int cy = cdc.GetDeviceCaps(VERTRES);
 
-	m_rect.left - 0;
+	m_rect.left = 0;
 	m_rect.top = 0;
 	m_rect.right = cx;
 	m_rect.bottom = cy;

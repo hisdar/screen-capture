@@ -21,7 +21,7 @@ BOOL SCCircleTool::Draw(CDC &cdc)
 	g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 
 	Gdiplus::Color gColor(GetRValue(m_color), GetGValue(m_color), GetBValue(m_color));
-	Gdiplus::Pen gCirclePen(gColor, m_size);
+	Gdiplus::Pen gCirclePen(gColor, (Gdiplus::REAL)m_size);
 	
 	g.DrawEllipse(&gCirclePen, m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height());
 

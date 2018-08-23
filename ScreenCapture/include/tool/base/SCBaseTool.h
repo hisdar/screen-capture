@@ -3,7 +3,13 @@
 #include "SCBaseToolController.h"
 #include "tool/base/SCBaseToolView.h"
 
-#define SC_TOOL_TYPE_SELECT 1
+typedef enum SC_TOOL_TYPE {
+	SC_TOOL_TYPE_ARROW = 1,
+	SC_TOOL_TYPE_MASK,
+	SC_TOOL_TYPE_RECTANGLE,
+	SC_TOOL_TYPE_SELECT,
+	SC_TOOL_TYPE_TEXT,
+} SCToolType;
 
 class SCBaseTool
 {

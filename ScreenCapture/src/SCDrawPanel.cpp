@@ -99,7 +99,7 @@ int SCDrawPanel::GetRectSize()
 
 void SCDrawPanel::AddListener(SCDrawPanelListener *listener)
 {
-	for (unsigned i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
+	for (int i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
 		if (m_scDrawPanelListenerArray.GetAt(i) == listener) {
 			return;
 		}
@@ -110,7 +110,7 @@ void SCDrawPanel::AddListener(SCDrawPanelListener *listener)
 
 void SCDrawPanel::RemoveListener(SCDrawPanelListener *listener)
 {
-	for (unsigned i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
+	for (int i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
 		if (m_scDrawPanelListenerArray.GetAt(i) == listener) {
 			m_scDrawPanelListenerArray.RemoveAt(i);
 			return;
@@ -133,8 +133,8 @@ void SCDrawPanel::UpdateCurLocationZoom()
 CPoint SCDrawPanel::GetZoomedPoint(const CPoint &srcPoint)
 {
 	CPoint zoomedPoint;
-	zoomedPoint.x = srcPoint.x * m_curPointZoomX;
-	zoomedPoint.y = srcPoint.y * m_curPointZoomY;
+	zoomedPoint.x = (int)(srcPoint.x * m_curPointZoomX);
+	zoomedPoint.y = (int)(srcPoint.y * m_curPointZoomY);
 
 	return zoomedPoint;
 }
@@ -486,7 +486,7 @@ void SCDrawPanel::OnMouseMove(UINT nFlags, CPoint point)
 		((SCSelectToolView *)m_currentTool->GetView())->GetSelectedRect(rect);
 
 		if (!rect.IsRectEmpty() && !m_selectedRect.EqualRect(rect)) {
-			for (unsigned i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
+			for (int i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
 				SCDrawPanelListener *l = m_scDrawPanelListenerArray.GetAt(i);
 				l->SelectedAreaChangeEvent(this, rect);
 			}
