@@ -3,13 +3,13 @@
 
 // HButton
 
-class HButton : public CButton
+class SCButton : public CButton
 {
-	DECLARE_DYNAMIC(HButton)
+	DECLARE_DYNAMIC(SCButton)
 
 public:
-	HButton();
-	virtual ~HButton();
+	SCButton();
+	virtual ~SCButton();
 
 	BOOL m_isMouseIn;
 	BOOL m_isClicked;

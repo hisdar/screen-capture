@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "tool/select/SCSelectToolView.h"
 #include "base/base-def.h"
-#include "tool/SCMaskTool.h"
+#include "tool/mask/SCMaskTool.h"
 
 SCSelectToolView::SCSelectToolView(CWnd *wnd)
 	: m_selectedRect(0, 0, 0, 0)

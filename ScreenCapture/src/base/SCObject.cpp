@@ -45,32 +45,6 @@ BOOL SCObject::CreateCompatibleCDC(CDC *pSrcCDC, CDC *pTagetCDC, CBitmap *pTarge
 	return TRUE;
 }
 
-BOOL SCObject::CopyCompatibleCDC(CDC *pSrcCDC, CDC *pTagetCDC, CBitmap *pTargetBmp)
-{
-	BOOL bRet = FALSE;
-
-	if (pSrcCDC == NULL || pTargetBmp == NULL || pTagetCDC == NULL) {
-		return FALSE;
-	}
-
-	// get src cdc size
-	int cx = pSrcCDC->GetDeviceCaps(HORZRES);
-	int cy = pSrcCDC->GetDeviceCaps(VERTRES);
-	SCDbg("HORZRES=%d, VERTRES=%d\n", cx, cy);
-
-	bRet = CreateCompatibleCDC(pSrcCDC, pTagetCDC, pTargetBmp);
-
-	// copy src image to buffer dc
-	bRet = pTagetCDC->StretchBlt(0, 0, cx, cy, pSrcCDC, 0, 0, cx, cy, SRCCOPY);
-	// bRet = pTagetCDC->BitBlt(0, 0, cx, cy, pSrcCDC, 0, 0, SRCCOPY);
-	if (!bRet) {
-		SCErr("wndCDCMem.BitBlt fail\n");
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
 BOOL SCObject::SaveBmp(CDC &dc, LPCTSTR pszFileName)
 {
 	// get selected bit map
@@ -114,6 +88,11 @@ BOOL SCObject::DCToImage(CDC &dc, CImage &image)
 BOOL SCObject::GetCBitmapSize(CDC *pCDC, CSize &size)
 {
 	int ret = FALSE;
+
+	if (pCDC == NULL || pCDC->GetSafeHdc() == NULL) {
+		SCErr("input parameter is NULL\n");
+		return FALSE;
+	}
 
 	CBitmap *dcBitmap = pCDC->GetCurrentBitmap();
 	if (dcBitmap == NULL) {

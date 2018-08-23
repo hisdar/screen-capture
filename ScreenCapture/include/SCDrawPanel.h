@@ -46,9 +46,13 @@ public:
 	int  GetRectSize();
 	void AddListener(SCDrawPanelListener *listener);
 	void RemoveListener(SCDrawPanelListener *listener);
+	BOOL GetSelectedBitmap(CBitmap *pSelectedBitmap);
 
 private:
 	SCDC m_scDC;
+	SCDC m_usreDrawSCDC;
+
+	CRect m_selectedRect;
 
 	int  m_resizeDirection;
 	int  m_screenCaptureState;
@@ -73,12 +77,14 @@ private:
 	SCDrawPanelListenerArray m_scDrawPanelListenerArray;
 
 	SCBaseTool *m_currentTool;
-	CRect m_oldSelectedRect;
+	
+
+	float m_curPointZoomX;
+	float m_curPointZoomY;
 
 private:
 	BOOL CreateUserDraw(CPoint * pPoint);
 	BOOL IsPointInRect(CPoint * pPoint, CRect * pCRect);
-	BOOL GetSelectedAreaRect(CRect * pCrect);
 	BOOL ModifyUserDrawEndPoint(CPoint * pPoint);
 	void Reset(void);
 	void UpdateCursorIcon(CPoint *pPoint);
@@ -87,8 +93,12 @@ private:
 	BOOL DrawScreenCaptureResult(CDC * pCDC);
 	BOOL DrawUserDraw(SCDC * pCDC);
 
+	void UpdateCurLocationZoom();
+	CPoint GetZoomedPoint(const CPoint &srcPoint);
+
 public:
 	afx_msg void OnPaint();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);

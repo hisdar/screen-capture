@@ -2,12 +2,6 @@
 #include "base/base-def.h"
 #include "tool/select/SCSelectToolController.h"
 
-#define SC_SELECT_STATE_NONE       0
-#define SC_SELECT_STATE_SELECT     1
-#define SC_SELECT_STATE_RESIZE     2
-#define SC_SELECT_STATE_MOVE       3
-#define SC_SELECT_STATE_FINISHED   4
-
 #define MOVE_LEFT_TO(rect, x) \
 	if ((x) > (rect).right) {\
 		(rect).left = (rect).right;\
@@ -50,6 +44,11 @@ SCSelectToolController::SCSelectToolController(SCSelectToolView *view)
 SCSelectToolController::~SCSelectToolController()
 {
 
+}
+
+int SCSelectToolController::GetState()
+{
+	return m_state;
 }
 
 void SCSelectToolController::UpdateCursorIcon(CPoint &point)

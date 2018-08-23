@@ -40,7 +40,6 @@ private:
 	typedef CArray<SCDrawPanel *> SCDrawPanalArray;
 private:
 	CBitmap screenBmp;
-	
 	CBitmap m_userDrawBmp;
 
 	CSCToolBar m_toolBar;
@@ -56,10 +55,10 @@ private:
 	int m_fontSize;
 
 	int m_selectAreaEditMode;
+	SCDrawPanel *m_dp;
 
 private:
 	BOOL GetScreenCDCMem(CDC * pCDC, CBitmap *pBmp);
-	BOOL GetScreenCaptureBitmap(CBitmap *pSelectedBitmap);
 	BOOL GetScreenCaptureSavePath(CString *pSavePath);
 
 public:

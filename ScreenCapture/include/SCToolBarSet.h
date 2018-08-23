@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/hstatic.h"
+#include "base/SCStatic.h"
 #include "resource.h"
 #include "afxwin.h"
 
@@ -24,27 +24,27 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	HStatic m_mainColorStatic;
+	SCStatic m_mainColorStatic;
 	afx_msg void OnPaint();
 	afx_msg void OnStnClickedStaticMainColor();
 	CStatic m_sizeStatic;
 
-	HStatic m_color2Static;
-	HStatic m_color3Static;
-	HStatic m_color4Static;
-	HStatic m_color5Static;
-	HStatic m_color6Static;
-	HStatic m_color7Static;
-	HStatic m_color8Static;
-	HStatic m_color9Static;
-	HStatic m_color10Static;
-	HStatic m_color11Static;
-	HStatic m_color12Static;
-	HStatic m_color13Static;
-	HStatic m_color14Static;
-	HStatic m_color15Static;
-	HStatic m_color16Static;
-	HStatic m_color17Static;
+	SCStatic m_color2Static;
+	SCStatic m_color3Static;
+	SCStatic m_color4Static;
+	SCStatic m_color5Static;
+	SCStatic m_color6Static;
+	SCStatic m_color7Static;
+	SCStatic m_color8Static;
+	SCStatic m_color9Static;
+	SCStatic m_color10Static;
+	SCStatic m_color11Static;
+	SCStatic m_color12Static;
+	SCStatic m_color13Static;
+	SCStatic m_color14Static;
+	SCStatic m_color15Static;
+	SCStatic m_color16Static;
+	SCStatic m_color17Static;
 
 	afx_msg void OnStnClickedStaticMainColor2();
 	afx_msg void OnStnClickedStaticMainColor3();

@@ -2,25 +2,25 @@
 //
 
 #include "stdafx.h"
-#include "base/HStatic.h"
+#include "base/SCStatic.h"
 
 
 // HStatic
 
-IMPLEMENT_DYNAMIC(HStatic, CStatic)
+IMPLEMENT_DYNAMIC(SCStatic, CStatic)
 
-HStatic::HStatic():
+SCStatic::SCStatic():
 	m_isMouseIn(FALSE)
 {
 
 }
 
-HStatic::~HStatic()
+SCStatic::~SCStatic()
 {
 }
 
 
-BEGIN_MESSAGE_MAP(HStatic, CStatic)
+BEGIN_MESSAGE_MAP(SCStatic, CStatic)
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -35,7 +35,7 @@ END_MESSAGE_MAP()
 
 
 
-void HStatic::OnPaint()
+void SCStatic::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 	// TODO: 在此处添加消息处理程序代码
@@ -84,26 +84,26 @@ void HStatic::OnPaint()
 	}
 }
 
-void HStatic::SetBgColor(COLORREF color)
+void SCStatic::SetBgColor(COLORREF color)
 {
 	m_backgroundColor = color;
 	Invalidate(TRUE);
 }
 
 
-COLORREF HStatic::GetBgColor()
+COLORREF SCStatic::GetBgColor()
 {
 	return m_backgroundColor;
 }
 
-void HStatic::SetIsMouseIn(BOOL isMouseIn)
+void SCStatic::SetIsMouseIn(BOOL isMouseIn)
 {
 	m_isMouseIn = isMouseIn;
 	Invalidate(TRUE);
 }
 
 
-void HStatic::OnMouseMove(UINT nFlags, CPoint point)
+void SCStatic::OnMouseMove(UINT nFlags, CPoint point)
 {
 	
 // 	if (!m_isMouseIn) {
@@ -123,7 +123,7 @@ void HStatic::OnMouseMove(UINT nFlags, CPoint point)
 }
 
 
-void HStatic::OnMouseLeave()
+void SCStatic::OnMouseLeave()
 {
 	m_isMouseIn = FALSE;
 	//MessageBox(_T("leag"), _T(""), MB_OK);
@@ -133,7 +133,7 @@ void HStatic::OnMouseLeave()
 }
 
 
-void HStatic::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
+void SCStatic::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//OnPaint();
@@ -142,7 +142,7 @@ void HStatic::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 }
 
 
-void HStatic::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
+void SCStatic::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
 	//OnPaint();
 	// TODO:  添加您的代码以绘制指定项
@@ -151,7 +151,7 @@ void HStatic::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 }
 
 
-void HStatic::OnMouseHover(UINT nFlags, CPoint point)
+void SCStatic::OnMouseHover(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	m_isMouseIn = TRUE;

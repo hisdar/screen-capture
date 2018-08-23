@@ -5,11 +5,11 @@
 #include "ScreenCaptureDlg.h"
 #include "afxdialogex.h"
 #include "SCToolBar.h"
-#include "tool/SCMaskTool.h"
-#include "tool/SCRectangleTool.h"
-#include "tool/SCCircleTool.h"
-#include "tool/SCArrowTool.h"
-#include "SCTextTool.h"
+#include "tool/mask/SCMaskTool.h"
+#include "tool/rectangle/SCRectangleTool.h"
+#include "tool/circle/SCCircleTool.h"
+#include "tool/arrow/SCArrowTool.h"
+#include "tool/text/SCTextTool.h"
 #include "base/base-def.h"
 #include "SCMonitorManager.h"
 
@@ -30,6 +30,7 @@ CScreenCaptureDlg::CScreenCaptureDlg(CWnd* pParent /*=NULL*/)
 {
 
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_dp = NULL;
 }
 
 void CScreenCaptureDlg::DoDataExchange(CDataExchange* pDX)
@@ -143,14 +144,10 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 
 		SCDC scDC;
 		monitor.GetMonitorSCDC(scDC);
-
-		scDC.Save(L"scDC.bmp");
-		SCDbg("scdc size:%d, %d\n", scDC.GetWidth(), scDC.GetHeight());
-
-		/////////////////////////////////////////////////////////
-		// 似乎必须要有下面的两句话，才能每次都复制到数据，不知道是为啥
 		
-		SCDrawPanel *m_dp = new SCDrawPanel();
+		CHECK_DELETE(m_dp);
+		m_dp = new SCDrawPanel();
+		
 		m_dp->Create(IDD_DIALOG_SC_DRAW_PANEL);
 		m_dp->UpdateBaseImage(scDC);
 		m_dp->SetState(SCREEN_CAPTURE_STATE_START);
@@ -160,10 +157,6 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 		monitor.GetMonitorRect(monitorRect);
 
 		m_dp->SetWindowPos(&wndTopMost, monitorRect.left, monitorRect.top, monitorRect.Width(), monitorRect.Height(), SWP_SHOWWINDOW);
-		m_dp->ShowWindow(SW_SHOW);
-
-		//m_dpArray.Add(m_dp);
-		
 	}
 
 	CDialogEx::OnHotKey(nHotKeyId, nKey1, nKey2);
@@ -191,33 +184,6 @@ BOOL CScreenCaptureDlg::GetScreenCDCMem(CDC * pCDC, CBitmap *pBmp)
 
 	return TRUE;
 }
-
-BOOL CScreenCaptureDlg::GetScreenCaptureBitmap(CBitmap *pSelectedBitmap)
-{
-	if (pSelectedBitmap == NULL) {
-		return FALSE;
-	}
-
-	CRect cRect;
-	
-	//CDC *pDlgCDC = &m_userDrawCDC;
-	CDC *pDlgCDC = NULL;
-
-	CDC pSelectedCDC;
-	pSelectedCDC.CreateCompatibleDC(pDlgCDC);
-
-	pSelectedBitmap->DeleteObject();
-	pSelectedBitmap->CreateCompatibleBitmap(pDlgCDC, cRect.Width(), cRect.Height());
-	pSelectedCDC.SelectObject(pSelectedBitmap);
-
-	pSelectedCDC.StretchBlt(0,          0,         cRect.Width(), cRect.Height(), pDlgCDC,
-							cRect.left, cRect.top, cRect.Width(), cRect.Height(), SRCCOPY);
-
-	pSelectedCDC.DeleteDC();
-	
-	return TRUE;
-}
-
 
 BOOL CScreenCaptureDlg::GetScreenCaptureSavePath(CString *pSavePath)
 {
@@ -265,7 +231,11 @@ BOOL CScreenCaptureDlg::GetScreenCaptureSavePath(CString *pSavePath)
 /////////////////////////////////////自定义消息/////////////////////////////////////////////////////////////
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureCancel(WPARAM wParam, LPARAM lParam)
 {
-	ShowWindow(SW_HIDE);
+	if (m_dp != NULL) {
+		m_dp->ShowWindow(SW_HIDE);
+		
+	}
+	
 	//Reset();
 
 	return 0;
@@ -274,9 +244,14 @@ afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureCancel(WPARAM wParam, LPARAM l
 
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureOk(WPARAM wParam, LPARAM lParam)
 {
+	if (m_dp == NULL) {
+		SCErr("draw panel is null\n");
+		return 0;
+	}
+
 	// get selected bit map
 	CBitmap selectedBitmap;
-	BOOL bRet = GetScreenCaptureBitmap(&selectedBitmap);
+	BOOL bRet = m_dp->GetSelectedBitmap(&selectedBitmap);
 
 	// copy bitmap to clip board
 	if (OpenClipboard()) {
@@ -288,25 +263,33 @@ afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureOk(WPARAM wParam, LPARAM lPara
 	selectedBitmap.DeleteObject();
 
 //	Reset();
-	ShowWindow(SW_HIDE);
-
+	m_dp->ShowWindow(SW_HIDE);
+	
 	return 0;
 }
 
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureSave(WPARAM wParam, LPARAM lParam)
 {
+	if (!m_dp) {
+		return 0;
+	}
+
+	CRect rect;
+	m_dp->GetWindowRect(&rect);
+	m_dp->SetWindowPos(&wndNoTopMost, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);
 
 	// get the file save path
 	CString savePath;
 	BOOL bRet = GetScreenCaptureSavePath(&savePath);
 	if (!bRet) {
+		m_dp->SetWindowPos(&wndTopMost, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);
 		m_toolBar.ShowWindow(SW_SHOW);
 		return 0;
 	}
 
 	// get selected bit map
 	CBitmap selectedBitmap;
-	bRet = GetScreenCaptureBitmap(&selectedBitmap);
+	m_dp->GetSelectedBitmap(&selectedBitmap);
 
 	// exchange bitmap to image
 	CImage selectedImage;
@@ -317,16 +300,18 @@ afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureSave(WPARAM wParam, LPARAM lPa
 	selectedBitmap.DeleteObject();
 	selectedImage.Destroy();
 
-	ShowWindow(SW_HIDE);
+	m_dp->ShowWindow(SW_HIDE);
+
 //	Reset();
 
 	return 0;
 }
 
-
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureDrawRect(WPARAM wParam, LPARAM lParam)
 {
 	if (wParam) {
+		
+
 		//m_dp->SetEditMode(SELECT_AREA_EDIT_DRAW_RECT);
 		m_toolBarSet.SetFontSize(m_rectSize);
 		m_toolBarSet.ShowWindow(SW_SHOW);

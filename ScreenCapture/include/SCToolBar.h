@@ -1,6 +1,6 @@
 #pragma once
 #include "afxwin.h"
-#include "base/HButton.h"
+#include "base/SCButton.h"
 #include "resource.h"
 
 // CSCToolBar ¶Ô»°¿ò
@@ -23,14 +23,14 @@ protected:
 
 private:
 
-	HButton m_okBtn;
-	HButton m_cancleBtn;
-	HButton m_saveBtn;
-	HButton m_undoBtn;
-	HButton m_drawRectBtn;
-	HButton m_drawCircleBtn;
-	HButton m_drawArrowBtn;
-	HButton m_textBtn;
+	SCButton m_okBtn;
+	SCButton m_cancleBtn;
+	SCButton m_saveBtn;
+	SCButton m_undoBtn;
+	SCButton m_drawRectBtn;
+	SCButton m_drawCircleBtn;
+	SCButton m_drawArrowBtn;
+	SCButton m_textBtn;
 
 	CBitmap m_okBmpIn;
 	CBitmap m_okBmpDef;
@@ -89,7 +89,7 @@ public:
 	afx_msg void OnBnClickedButtonText();
 //	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 
-	HButton m_okBnt2;
+	SCButton m_okBnt2;
 	afx_msg void OnBnClickedButtonOk2();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

@@ -5,11 +5,11 @@
 #include "SCDrawPanel.h"
 #include "afxdialogex.h"
 #include "base/base-def.h"
-#include "tool/SCMaskTool.h"
-#include "tool/SCRectangleTool.h"
-#include "tool/SCCircleTool.h"
-#include "tool/SCArrowTool.h"
-#include "SCTextTool.h"
+#include "tool/mask/SCMaskTool.h"
+#include "tool/rectangle/SCRectangleTool.h"
+#include "tool/circle/SCCircleTool.h"
+#include "tool/arrow/SCArrowTool.h"
+#include "tool/text/SCTextTool.h"
 #include "tool/select/SCSelectTool.h"
 #include "SCMonitorManager.h"
 // SCEditor 对话框
@@ -34,7 +34,8 @@ SCDrawPanel::SCDrawPanel(CWnd* pParent /*=NULL*/)
 	, m_color(RGB(0, 0, 0))
 	, m_currentTool(NULL)
 {
-
+	m_curPointZoomX = 1.0f;
+	m_curPointZoomY = 1.0f;
 }
 
 SCDrawPanel::~SCDrawPanel()
@@ -48,6 +49,7 @@ void SCDrawPanel::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(SCDrawPanel, CDialogEx)
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
@@ -65,6 +67,8 @@ BOOL SCDrawPanel::UpdateBaseImage(SCDC &scDC)
 		SCDbg("scdc create fail\n");
 		return FALSE;
 	}
+
+	UpdateCurLocationZoom();
 
 	Invalidate();
 
@@ -114,6 +118,27 @@ void SCDrawPanel::RemoveListener(SCDrawPanelListener *listener)
 	}
 }
 
+void SCDrawPanel::UpdateCurLocationZoom()
+{
+	CSize baseImgSize;
+	GetCBitmapSize(m_scDC.GetDC(), baseImgSize);
+
+	CRect wndRect;
+	GetWindowRect(&wndRect);
+
+	m_curPointZoomX = 1.0f * baseImgSize.cx / wndRect.Width();
+	m_curPointZoomY = 1.0f * baseImgSize.cy / wndRect.Height();
+}
+
+CPoint SCDrawPanel::GetZoomedPoint(const CPoint &srcPoint)
+{
+	CPoint zoomedPoint;
+	zoomedPoint.x = srcPoint.x * m_curPointZoomX;
+	zoomedPoint.y = srcPoint.y * m_curPointZoomY;
+
+	return zoomedPoint;
+}
+
 ////////////////////////////////////////////////////////////
 BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 {
@@ -121,16 +146,16 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 
 	// 1. draw user draw
 	// 1.1 create user draw cdc based on screen cdc
-	SCDC usreDrawSCDC(m_scDC.GetDC());
+	m_usreDrawSCDC.Create(m_scDC.GetDC());
 
 	// 1.2 draw user darw
-	bRet = DrawUserDraw(&usreDrawSCDC);
+	bRet = DrawUserDraw(&m_usreDrawSCDC);
 	if (!bRet) {
 		SCErr("DrawUserDrawfail\n");
 		return FALSE;
 	}
 	// 2. copy user draw to wnndow cdc
-	SCDC wndSCDC(usreDrawSCDC.GetDC());
+	SCDC wndSCDC(m_usreDrawSCDC.GetDC());
 
 	// 3. draw rect on window cdc
 	CSize wndBmpSize, dialogBmpSize;
@@ -156,22 +181,12 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 
 	m_currentTool->GetView()->Draw(*wndSCDC.GetDC());
 
-	// 5. copy window dc to window dc
-	bRet = pTagDC->StretchBlt(0, 0, dialogBmpSize.cx, dialogBmpSize.cy, wndSCDC.GetDC(), 0, 0, wndBmpSize.cx, wndBmpSize.cy, SRCCOPY);
+	bRet = pTagDC->StretchBlt(0, 0, dialogBmpSize.cx, dialogBmpSize.cy,
+		wndSCDC.GetDC(), 0, 0, wndBmpSize.cx, wndBmpSize.cy, SRCCOPY);
 	if (!bRet) {
-		MessageBox(_T("cDC->BitBlt fail"), _T("message"), MB_OK);
+		SCErr("cDC->BitBlt fail");
+		return FALSE;
 	}
-	
-	/*// 3. draw rect on window cdc
-	int cx = pTagDC->GetDeviceCaps(HORZRES);
-	int cy = pTagDC->GetDeviceCaps(VERTRES);
-	//SCDbg("tagDC size:[%d, %d\n]", cx, cy);
-
-	// 5. copy window dc to window dc
-	bRet = pTagDC->BitBlt(0, 0, cx, cy, m_scDC.GetDC(), 0, 0, SRCCOPY);
-	if (!bRet) {
-		SCErr("BitBlt fail\n");
-	}*/
 
 	return TRUE;
 }
@@ -264,23 +279,6 @@ BOOL SCDrawPanel::CreateUserDraw(CPoint * pPoint)
 	return TRUE;
 }
 
-BOOL SCDrawPanel::GetSelectedAreaRect(CRect * pCrect)
-{
-	if (pCrect == NULL) {
-		return FALSE;
-	}
-
-	int selectedAreaStartX = m_startLocation.x < m_endLocation.x ? m_startLocation.x : m_endLocation.x;
-	int selectedAreaStartY = m_startLocation.y < m_endLocation.y ? m_startLocation.y : m_endLocation.y;
-
-	int selectedAreaEndX = m_startLocation.x > m_endLocation.x ? m_startLocation.x : m_endLocation.x;
-	int selectedAreaEndY = m_startLocation.y > m_endLocation.y ? m_startLocation.y : m_endLocation.y;
-
-	pCrect->SetRect(selectedAreaStartX, selectedAreaStartY, selectedAreaEndX, selectedAreaEndY);
-
-	return TRUE;
-}
-
 BOOL SCDrawPanel::IsPointInRect(CPoint * pPoint, CRect * pCRect)
 {
 	if (pPoint->x < pCRect->left) {
@@ -346,8 +344,7 @@ void SCDrawPanel::UpdateCursorIcon(CPoint *pPoint)
 
 BOOL SCDrawPanel::GetEditModeCursorIcon(CPoint *pPoint, LONG *cursorIcon)
 {
-	CRect selectedArea;
-	BOOL bRet = GetSelectedAreaRect(&selectedArea);
+	CRect selectedArea = m_selectedRect;
 
 	// mouse is not in selecte area
 	if (!IsPointInRect(pPoint, &selectedArea)) {
@@ -375,8 +372,7 @@ BOOL SCDrawPanel::GetEditModeCursorIcon(CPoint *pPoint, LONG *cursorIcon)
 
 BOOL SCDrawPanel::DrawInformation(CDC * pCDC)
 {
-	CRect cRect;
-	BOOL bRet = GetSelectedAreaRect(&cRect);
+	CRect cRect = m_selectedRect;
 
 	CString message;
 	message.Format(_T("selectedAreaRect:[%d, %d, %d, %d]"), cRect.top, cRect.right, cRect.bottom, cRect.left);
@@ -409,6 +405,32 @@ BOOL SCDrawPanel::DrawInformation(CDC * pCDC)
 	return 0;
 }
 
+BOOL SCDrawPanel::GetSelectedBitmap(CBitmap *pSelectedBitmap)
+{
+	if (pSelectedBitmap == NULL) {
+		return FALSE;
+	}
+
+	CRect cRect = m_selectedRect;
+
+	CDC *pDlgCDC = m_usreDrawSCDC.GetDC();
+
+	CDC pSelectedCDC;
+	pSelectedCDC.CreateCompatibleDC(pDlgCDC);
+
+	pSelectedBitmap->DeleteObject();
+	pSelectedBitmap->CreateCompatibleBitmap(pDlgCDC, cRect.Width(), cRect.Height());
+	pSelectedCDC.SelectObject(pSelectedBitmap);
+
+	pSelectedCDC.SetStretchBltMode(STRETCH_HALFTONE);
+	pSelectedCDC.StretchBlt(0, 0, cRect.Width(), cRect.Height(), pDlgCDC,
+		cRect.left, cRect.top, cRect.Width(), cRect.Height(), SRCCOPY);
+
+	pSelectedCDC.DeleteDC();
+
+	return TRUE;
+}
+
 
 /////////////////////// SCEditor 消息处理程序 ////////////////////////////////////////
 void SCDrawPanel::OnPaint()
@@ -420,48 +442,60 @@ void SCDrawPanel::OnPaint()
 	int height = dc.GetDeviceCaps(VERTRES);
 
 	DrawScreenCaptureResult(&dc);
-
-	//dc.BitBlt(0, 0, width, height, &m_baseCDC, 0, 0, SRCCOPY);
-	/*SCMonitorManager mgr;
-	HMONITOR monitor;
-	mgr.GetMonitor(monitor, 1);
-
-	SCMonitor m;
-	CString name = m.GetName();
-	
-	CDC screenDc;
-	screenDc.CreateDCW(name, NULL, NULL, NULL);
-	dc.BitBlt(0, 0, width, height, &screenDc, 0, 0, SRCCOPY);
-
-	SCDbg("width=%d, height=%d\n", width, height);*/
-
 }
 
 void SCDrawPanel::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	BOOL bRet = FALSE;
 
-	m_currentTool->GetController()->OnLButtonDown(nFlags, point);
+	m_currentTool->GetController()->OnLButtonDown(nFlags, GetZoomedPoint(point));
 
 	CDialogEx::OnLButtonDown(nFlags, point);
 }
 
 void SCDrawPanel::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnLButtonUp(nFlags, point);
+	m_currentTool->GetController()->OnLButtonUp(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnLButtonUp(nFlags, point);
 }
 
 void SCDrawPanel::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnRButtonDown(nFlags, point);
+	m_currentTool->GetController()->OnRButtonDown(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnRButtonDown(nFlags, point);
 }
 
 void SCDrawPanel::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnRButtonUp(nFlags, point);
+	m_currentTool->GetController()->OnRButtonUp(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnRButtonUp(nFlags, point);
+}
+
+void SCDrawPanel::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	m_currentTool->GetController()->OnLButtonDblClk(nFlags, GetZoomedPoint(point));
+	CDialogEx::OnLButtonDblClk(nFlags, point);
+}
+
+void SCDrawPanel::OnMouseMove(UINT nFlags, CPoint point)
+{
+	m_currentTool->GetController()->OnMouseMove(nFlags, GetZoomedPoint(point));
+
+	if (m_currentTool->GetToolType() == SC_TOOL_TYPE_SELECT) {
+		CRect rect;
+		((SCSelectToolView *)m_currentTool->GetView())->GetSelectedRect(rect);
+
+		if (!rect.IsRectEmpty() && !m_selectedRect.EqualRect(rect)) {
+			for (unsigned i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
+				SCDrawPanelListener *l = m_scDrawPanelListenerArray.GetAt(i);
+				l->SelectedAreaChangeEvent(this, rect);
+			}
+
+			m_selectedRect = rect;
+		}
+	}
+
+	CDialogEx::OnMouseMove(nFlags, point);
 }
 
 // over ride and fix flicker issue
@@ -472,30 +506,9 @@ BOOL SCDrawPanel::OnEraseBkgnd(CDC* pDC)
 	// return CDialogEx::OnEraseBkgnd(pDC);
 }
 
-void SCDrawPanel::OnLButtonDblClk(UINT nFlags, CPoint point)
+void SCDrawPanel::OnSize(UINT nType, int cx, int cy)
 {
-	m_currentTool->GetController()->OnLButtonDblClk(nFlags, point);
-	CDialogEx::OnLButtonDblClk(nFlags, point);
-}
+	CDialogEx::OnSize(nType, cx, cy);
 
-void SCDrawPanel::OnMouseMove(UINT nFlags, CPoint point)
-{
-	m_currentTool->GetController()->OnMouseMove(nFlags, point);
-
-	if (m_currentTool->GetToolType() == SC_TOOL_TYPE_SELECT) {
-		CRect rect;
-		((SCSelectToolView *)m_currentTool->GetView())->GetSelectedRect(rect);
-
-		if (!rect.IsRectEmpty() && !m_oldSelectedRect.EqualRect(rect)) {
-			for (unsigned i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
-				SCDrawPanelListener *l = m_scDrawPanelListenerArray.GetAt(i);
-				l->SelectedAreaChangeEvent(this, rect);
-			}
-
-			m_oldSelectedRect = rect;
-		}
-	}
-
-
-	CDialogEx::OnMouseMove(nFlags, point);
+	UpdateCurLocationZoom();
 }

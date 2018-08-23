@@ -3,11 +3,20 @@
 #include "tool/base/SCBaseToolController.h"
 #include "tool/select/SCSelectToolView.h"
 
+
+#define SC_SELECT_STATE_NONE       0
+#define SC_SELECT_STATE_SELECT     1
+#define SC_SELECT_STATE_RESIZE     2
+#define SC_SELECT_STATE_MOVE       3
+#define SC_SELECT_STATE_FINISHED   4
+
 class SCSelectToolController : public SCBaseToolController
 {
 public:
 	SCSelectToolController(SCSelectToolView *view);
 	virtual ~SCSelectToolController();
+
+	int  GetState();
 
 	virtual void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual void OnLButtonUp(UINT nFlags, CPoint point);

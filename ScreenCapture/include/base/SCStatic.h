@@ -3,13 +3,13 @@
 
 // HStatic
 
-class HStatic : public CStatic
+class SCStatic : public CStatic
 {
-	DECLARE_DYNAMIC(HStatic)
+	DECLARE_DYNAMIC(SCStatic)
 
 public:
-	HStatic();
-	virtual ~HStatic();
+	SCStatic();
+	virtual ~SCStatic();
 
 private:
 	COLORREF m_backgroundColor;

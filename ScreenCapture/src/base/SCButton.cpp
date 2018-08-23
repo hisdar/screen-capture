@@ -2,26 +2,26 @@
 //
 
 #include "stdafx.h"
-#include "base/HButton.h"
+#include "base/SCButton.h"
 
 
 // HButton
 
-IMPLEMENT_DYNAMIC(HButton, CWnd)
+IMPLEMENT_DYNAMIC(SCButton, CWnd)
 
-HButton::HButton() :
+SCButton::SCButton() :
 m_isMouseIn(FALSE),
 	m_isClicked(FALSE)
 {
 
 }
 
-HButton::~HButton()
+SCButton::~SCButton()
 {
 }
 
 
-BEGIN_MESSAGE_MAP(HButton, CWnd)
+BEGIN_MESSAGE_MAP(SCButton, CWnd)
 	ON_WM_MOUSELEAVE()
 //	ON_WM_MOUSEHOVER()
 //	ON_WM_MOUSEWHEEL()
@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 
 
 // HButton 消息处理程序
-void HButton::OnMouseLeave()
+void SCButton::OnMouseLeave()
 {
 	m_isMouseIn = FALSE;
 
@@ -45,7 +45,7 @@ void HButton::OnMouseLeave()
 	CButton::OnMouseLeave();
 }
 
-void HButton::OnMouseMove(UINT nFlags, CPoint point)
+void SCButton::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (!m_isMouseIn) {
 		m_isMouseIn = TRUE;
@@ -55,7 +55,7 @@ void HButton::OnMouseMove(UINT nFlags, CPoint point)
 	CButton::OnMouseMove(nFlags, point);
 }
 
-BOOL HButton::HLoadBitMap(UINT deffaultBmpId, UINT mouseInBmpId, UINT clickedBmpId)
+BOOL SCButton::HLoadBitMap(UINT deffaultBmpId, UINT mouseInBmpId, UINT clickedBmpId)
 {
 	m_bmpMouseIn.LoadBitmapW(mouseInBmpId);
 	m_bmpDefault.LoadBitmapW(deffaultBmpId);
@@ -64,14 +64,14 @@ BOOL HButton::HLoadBitMap(UINT deffaultBmpId, UINT mouseInBmpId, UINT clickedBmp
 	return HSetBtnBitMap();
 }
 
-BOOL HButton::HSetBtnClicked(BOOL isClicked)
+BOOL SCButton::HSetBtnClicked(BOOL isClicked)
 {
 	m_isClicked = isClicked;
 
 	return HSetBtnBitMap();
 }
 
-BOOL HButton::HSetBtnBitMap()
+BOOL SCButton::HSetBtnBitMap()
 {
 	SetBitmap((HBITMAP)m_bmpDefault.GetSafeHandle());
 
