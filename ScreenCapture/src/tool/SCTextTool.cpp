@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "tool/text/SCTextTool.h"
+#include "tool/SCTextTool.h"
 
 
 SCTextTool::SCTextTool()

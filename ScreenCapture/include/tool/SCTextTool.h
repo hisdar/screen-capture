@@ -1,12 +1,11 @@
 #pragma once
 
-#include "tool/base/SCBaseToolView.h"
 #include "base/SCObject.h"
 
 #define FONT_ADJUST						8
 #define DEFAULT_FONT					_T("Î¢ÈíÑÅºÚ")
 
-class SCTextTool : public SCBaseToolView, public SCObject
+class SCTextTool : public SCObject
 {
 public:
 	SCTextTool();

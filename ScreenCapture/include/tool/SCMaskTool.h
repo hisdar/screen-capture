@@ -1,10 +1,9 @@
 #pragma once
 
-#include "tool/base/SCBaseToolView.h"
 #include "base/SCObject.h"
 
 /// @brief 蒙版工具，用来绘制蒙版
-class SCMaskTool : public SCBaseToolView, public SCObject
+class SCMaskTool : public SCObject
 {
 public:
 	SCMaskTool();

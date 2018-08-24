@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "tool/arrow/SCArrowTool.h"
+#include "tool/SCArrowTool.h"
 #include <GdiPlus.h>
 #include <Windows.h>
 

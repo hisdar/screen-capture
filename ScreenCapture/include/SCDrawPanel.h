@@ -5,7 +5,13 @@
 #include "base/SCObject.h"
 #include "UserDraw.h"
 
-#include "tool/base/SCBaseTool.h"
+#include "tool/SCBaseTool.h"
+#include "tool/SCMaskTool.h"
+#include "tool/SCRectangleTool.h"
+#include "tool/SCCircleTool.h"
+#include "tool/SCArrowTool.h"
+#include "tool/SCTextTool.h"
+#include "tool/SCSelectTool.h"
 #include "base/SCDC.h"
 
 class SCDrawPanel;
@@ -16,11 +22,11 @@ public:
 	SCDrawPanelListener() {};
 	virtual ~SCDrawPanelListener() {};
 
-	virtual void SelectedAreaChangeEvent(const SCDrawPanel *scDrawPanel, CRect &rect) {};
+	virtual void SelectedAreaChangeEvent(const SCDrawPanel *scDrawPanel, const CRect &rect) = 0;
 };
 
 // SCEditor ¶Ô»°¿ò
-class SCDrawPanel : public CDialogEx, public SCObject
+class SCDrawPanel : public CDialogEx, public SCObject, public SCSelectToolEventListener
 {
 	DECLARE_DYNAMIC(SCDrawPanel)
 
@@ -41,12 +47,14 @@ private:
 
 public:
 	BOOL UpdateBaseImage(SCDC &scDC);
-	void SetState(int state);
-	void SetEditMode(int editMode);
+	void SetTool(int editMode);
 	int  GetRectSize();
 	void AddListener(SCDrawPanelListener *listener);
 	void RemoveListener(SCDrawPanelListener *listener);
 	BOOL GetSelectedBitmap(CBitmap *pSelectedBitmap);
+
+	virtual void SelectAreaChangeEvent(const CRect &selectArea);
+	virtual void SelectStateChangeEvent(SCSelectState state);
 
 private:
 	SCDC m_scDC;
@@ -55,8 +63,7 @@ private:
 	CRect m_selectedRect;
 
 	int  m_resizeDirection;
-	int  m_screenCaptureState;
-	int  m_selectAreaEditMode;
+	int  m_toolType;
 	BOOL m_isMouseLButtonDown;
 
 	COLORREF m_color;
@@ -78,7 +85,6 @@ private:
 
 	SCBaseTool *m_currentTool;
 	
-
 	float m_curPointZoomX;
 	float m_curPointZoomY;
 

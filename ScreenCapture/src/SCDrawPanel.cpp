@@ -5,12 +5,6 @@
 #include "SCDrawPanel.h"
 #include "afxdialogex.h"
 #include "base/base-def.h"
-#include "tool/mask/SCMaskTool.h"
-#include "tool/rectangle/SCRectangleTool.h"
-#include "tool/circle/SCCircleTool.h"
-#include "tool/arrow/SCArrowTool.h"
-#include "tool/text/SCTextTool.h"
-#include "tool/select/SCSelectTool.h"
 #include "SCMonitorManager.h"
 // SCEditor 对话框
 
@@ -18,14 +12,13 @@ IMPLEMENT_DYNAMIC(SCDrawPanel, CDialogEx)
 
 SCDrawPanel::SCDrawPanel(CWnd* pParent /*=NULL*/)
 	: CDialogEx(SCDrawPanel::IDD, pParent)
-	, m_screenCaptureState(SCREEN_CAPTURE_STATE_NONE)
 	, m_startLocation(0)
 	, m_endLocation(0)
 	, m_isMouseLButtonDown(FALSE)
 	, m_resizeDirection(RESIZE_LOCATION_NONE)
 	, m_selecteAreaLastPoint(0)
 	, m_messageStr(_T(""))
-	, m_selectAreaEditMode(0)
+	, m_toolType(0)
 	, m_fontSize(12)
 	, m_rectSize(2)
 	, m_arrowSize(2)
@@ -36,6 +29,12 @@ SCDrawPanel::SCDrawPanel(CWnd* pParent /*=NULL*/)
 {
 	m_curPointZoomX = 1.0f;
 	m_curPointZoomY = 1.0f;
+
+	// 初始化第一个工具是选择工具
+	m_toolType = SC_TOOL_TYPE_SELECT;
+	SCSelectTool *selectTool = new SCSelectTool();
+	selectTool->AddListener(this);
+	m_currentTool = selectTool;
 }
 
 SCDrawPanel::~SCDrawPanel()
@@ -75,21 +74,14 @@ BOOL SCDrawPanel::UpdateBaseImage(SCDC &scDC)
 	return TRUE;
 }
 
-void SCDrawPanel::SetState(int state)
+void SCDrawPanel::SetTool(int toolType)
 {
-	m_screenCaptureState = state;
-	if (m_screenCaptureState == SCREEN_CAPTURE_STATE_START) {
-		if (m_currentTool != NULL) {
-			delete m_currentTool;
-		}
-
-		m_currentTool = new SCSelectTool(this);
+	if (m_toolType == toolType) {
+		return;
 	}
-}
 
-void SCDrawPanel::SetEditMode(int editMode)
-{
-	m_selectAreaEditMode = editMode;
+	// create tool
+	m_toolType = toolType;
 }
 
 int SCDrawPanel::GetRectSize()
@@ -179,7 +171,7 @@ BOOL SCDrawPanel::DrawScreenCaptureResult(CDC * pTagDC)
 	SCDbg("scdc dc size:%d, %d, scdc bmp size:%d, %d\n", cxWnd, cyWnd, wndBmpSize.cx, wndBmpSize.cy);
 	SCDbg("dialog rect:%d, %d, %d, %d\n", dialogRect.left, dialogRect.top, dialogRect.right, dialogRect.bottom);
 
-	m_currentTool->GetView()->Draw(*wndSCDC.GetDC());
+	m_currentTool->Draw(*wndSCDC.GetDC());
 
 	bRet = pTagDC->StretchBlt(0, 0, dialogBmpSize.cx, dialogBmpSize.cy,
 		wndSCDC.GetDC(), 0, 0, wndBmpSize.cx, wndBmpSize.cy, SRCCOPY);
@@ -230,7 +222,7 @@ BOOL SCDrawPanel::DrawUserDraw(SCDC * pCDC)
 
 BOOL SCDrawPanel::CreateUserDraw(CPoint * pPoint)
 {
-	if (m_selectAreaEditMode == SELECT_AREA_EDIT_NONE) {
+	if (m_toolType == SC_TOOL_TYPE_NONE) {
 		return FALSE;
 	}
 
@@ -240,21 +232,21 @@ BOOL SCDrawPanel::CreateUserDraw(CPoint * pPoint)
 	userDraw.m_endPoint.SetPoint(pPoint->x, pPoint->y);
 	userDraw.m_color = m_color;
 
-	switch (m_selectAreaEditMode)
+	switch (m_toolType)
 	{
-	case SELECT_AREA_EDIT_DRAW_RECT:
+	case SC_TOOL_TYPE_RECTANGLE :
 		userDraw.m_shape = USER_DRAW_SHAPE_RECT;
 		userDraw.m_size = m_rectSize;
 		break;
-	case SELECT_AREA_EDIT_DRAW_CIRCLE:
+	case SC_TOOL_TYPE_CIRCLE:
 		userDraw.m_shape = USER_DRAW_SHAPE_CIRCLE;
 		userDraw.m_size = m_circleSize;
 		break;
-	case SELECT_AREA_EDIT_DRAW_ARROW:
+	case SC_TOOL_TYPE_ARROW:
 		userDraw.m_shape = USER_DRAW_SHAPE_ARROW;
 		userDraw.m_size = m_arrowSize;
 		break;
-	case SELECT_AREA_EDIT_DRAW_TEXT:
+	case SC_TOOL_TYPE_TEXT:
 		userDraw.m_shape = USER_DRAW_SHAPE_TEXT;
 		userDraw.m_size = m_fontSize;
 
@@ -316,9 +308,8 @@ BOOL SCDrawPanel::ModifyUserDrawEndPoint(CPoint * pPoint)
 void SCDrawPanel::Reset(void)
 {
 	m_isMouseLButtonDown = FALSE;
-	m_screenCaptureState = SCREEN_CAPTURE_STATE_NONE;
 	m_resizeDirection = RESIZE_LOCATION_NONE;
-	m_selectAreaEditMode = SELECT_AREA_EDIT_NONE;
+	m_toolType = SC_TOOL_TYPE_NONE;
 
 	m_startLocation.SetPoint(-1, -1);
 	m_endLocation.SetPoint(-1, -1);
@@ -333,7 +324,7 @@ void SCDrawPanel::UpdateCursorIcon(CPoint *pPoint)
 	LONG cursorIcon = (LONG)LoadCursor(NULL, IDC_ARROW);
 
 	// selected area is in edit
-	if (m_selectAreaEditMode != SELECT_AREA_EDIT_NONE) {
+	if (m_toolType != SC_TOOL_TYPE_NONE) {
 		GetEditModeCursorIcon(pPoint, &cursorIcon);
 	}
 	
@@ -352,14 +343,14 @@ BOOL SCDrawPanel::GetEditModeCursorIcon(CPoint *pPoint, LONG *cursorIcon)
 		return TRUE;
 	}
 
-	switch (m_selectAreaEditMode) {
+	switch (m_toolType) {
 
-	case SELECT_AREA_EDIT_DRAW_RECT:
-	case SELECT_AREA_EDIT_DRAW_CIRCLE:
+	case SC_TOOL_TYPE_RECTANGLE:
+	case SC_TOOL_TYPE_CIRCLE:
 		*cursorIcon = (LONG)LoadCursor(NULL, IDC_CROSS);
 		break;
 
-	case SELECT_AREA_EDIT_DRAW_TEXT:
+	case SC_TOOL_TYPE_TEXT:
 		*cursorIcon = (LONG)LoadCursor(NULL, IDC_IBEAM);
 		break;
 
@@ -381,9 +372,6 @@ BOOL SCDrawPanel::DrawInformation(CDC * pCDC)
 	message.Format(_T("m_selecteAreaLastPoint:[%d, %d]"), m_selecteAreaLastPoint.x, m_selecteAreaLastPoint.y);
 	pCDC->TextOutW(100, 65, message);
 
-	message.Format(_T("m_screenCaptureState:[%d]"), m_screenCaptureState);
-	pCDC->TextOutW(100, 80, message);
-
 	message.Format(_T("m_isMouseLButtonDown:[%d]"), m_isMouseLButtonDown);
 	pCDC->TextOutW(100, 95, message);
 
@@ -396,7 +384,7 @@ BOOL SCDrawPanel::DrawInformation(CDC * pCDC)
 	message.Format(_T("m_endLocation:[%d, %d]"), m_endLocation.x, m_endLocation.y);
 	pCDC->TextOutW(100, 140, message);
 
-	message.Format(_T("m_selectAreaEditMode:[%d], m_userDrawArraySize[%d]"), m_selectAreaEditMode, m_userDrawArray.GetSize());
+	message.Format(_T("m_selectAreaEditMode:[%d], m_userDrawArraySize[%d]"), m_toolType, m_userDrawArray.GetSize());
 	pCDC->TextOutW(100, 155, message);
 
 
@@ -431,7 +419,6 @@ BOOL SCDrawPanel::GetSelectedBitmap(CBitmap *pSelectedBitmap)
 	return TRUE;
 }
 
-
 /////////////////////// SCEditor 消息处理程序 ////////////////////////////////////////
 void SCDrawPanel::OnPaint()
 {
@@ -448,53 +435,37 @@ void SCDrawPanel::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	BOOL bRet = FALSE;
 
-	m_currentTool->GetController()->OnLButtonDown(nFlags, GetZoomedPoint(point));
-
+	m_currentTool->OnLButtonDown(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnLButtonDown(nFlags, point);
 }
 
 void SCDrawPanel::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnLButtonUp(nFlags, GetZoomedPoint(point));
+	m_currentTool->OnLButtonUp(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnLButtonUp(nFlags, point);
 }
 
 void SCDrawPanel::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnRButtonDown(nFlags, GetZoomedPoint(point));
+	m_currentTool->OnRButtonDown(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnRButtonDown(nFlags, point);
 }
 
 void SCDrawPanel::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnRButtonUp(nFlags, GetZoomedPoint(point));
+	m_currentTool->OnRButtonUp(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnRButtonUp(nFlags, point);
 }
 
 void SCDrawPanel::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnLButtonDblClk(nFlags, GetZoomedPoint(point));
+	m_currentTool->OnLButtonDblClk(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnLButtonDblClk(nFlags, point);
 }
 
 void SCDrawPanel::OnMouseMove(UINT nFlags, CPoint point)
 {
-	m_currentTool->GetController()->OnMouseMove(nFlags, GetZoomedPoint(point));
-
-	if (m_currentTool->GetToolType() == SC_TOOL_TYPE_SELECT) {
-		CRect rect;
-		((SCSelectToolView *)m_currentTool->GetView())->GetSelectedRect(rect);
-
-		if (!rect.IsRectEmpty() && !m_selectedRect.EqualRect(rect)) {
-			for (int i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
-				SCDrawPanelListener *l = m_scDrawPanelListenerArray.GetAt(i);
-				l->SelectedAreaChangeEvent(this, rect);
-			}
-
-			m_selectedRect = rect;
-		}
-	}
-
+	m_currentTool->OnMouseMove(nFlags, GetZoomedPoint(point));
 	CDialogEx::OnMouseMove(nFlags, point);
 }
 
@@ -502,7 +473,6 @@ void SCDrawPanel::OnMouseMove(UINT nFlags, CPoint point)
 BOOL SCDrawPanel::OnEraseBkgnd(CDC* pDC)
 {
 	return TRUE;
-
 	// return CDialogEx::OnEraseBkgnd(pDC);
 }
 
@@ -511,4 +481,23 @@ void SCDrawPanel::OnSize(UINT nType, int cx, int cy)
 	CDialogEx::OnSize(nType, cx, cy);
 
 	UpdateCurLocationZoom();
+}
+
+void SCDrawPanel::SelectAreaChangeEvent(const CRect &selectArea)
+{
+	if (!selectArea.IsRectEmpty() && !m_selectedRect.EqualRect(selectArea)) {
+
+		for (int i = 0; i < m_scDrawPanelListenerArray.GetSize(); i++) {
+			SCDrawPanelListener *l = m_scDrawPanelListenerArray.GetAt(i);
+			l->SelectedAreaChangeEvent(this, selectArea);
+		}
+
+		m_selectedRect = selectArea;
+		Invalidate();
+	}
+}
+
+void SCDrawPanel::SelectStateChangeEvent(SCSelectState state)
+{
+
 }

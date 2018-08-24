@@ -5,11 +5,11 @@
 #include "ScreenCaptureDlg.h"
 #include "afxdialogex.h"
 #include "SCToolBar.h"
-#include "tool/mask/SCMaskTool.h"
-#include "tool/rectangle/SCRectangleTool.h"
-#include "tool/circle/SCCircleTool.h"
-#include "tool/arrow/SCArrowTool.h"
-#include "tool/text/SCTextTool.h"
+#include "tool/SCMaskTool.h"
+#include "tool/SCRectangleTool.h"
+#include "tool/SCCircleTool.h"
+#include "tool/SCArrowTool.h"
+#include "tool/SCTextTool.h"
 #include "base/base-def.h"
 #include "SCMonitorManager.h"
 
@@ -150,7 +150,6 @@ void CScreenCaptureDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 		
 		m_dp->Create(IDD_DIALOG_SC_DRAW_PANEL);
 		m_dp->UpdateBaseImage(scDC);
-		m_dp->SetState(SCREEN_CAPTURE_STATE_START);
 		m_dp->AddListener(this);
 
 		CRect monitorRect;
@@ -241,7 +240,6 @@ afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureCancel(WPARAM wParam, LPARAM l
 	return 0;
 }
 
-
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureOk(WPARAM wParam, LPARAM lParam)
 {
 	if (m_dp == NULL) {
@@ -326,42 +324,40 @@ afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureDrawRect(WPARAM wParam, LPARAM
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureDrawCircel(WPARAM wParam, LPARAM lParam)
 {
 	if (wParam) {
-		m_selectAreaEditMode = SELECT_AREA_EDIT_DRAW_CIRCLE;
+		m_selectAreaEditMode = SC_TOOL_TYPE_CIRCLE;
 		m_toolBarSet.SetFontSize(m_circleSize);
 		m_toolBarSet.ShowWindow(SW_SHOW);
 	} else {
-		m_selectAreaEditMode = SELECT_AREA_EDIT_NONE;
+		m_selectAreaEditMode = SC_TOOL_TYPE_NONE;
 		m_toolBarSet.ShowWindow(SW_HIDE);
 	}
 
 	return 0;
 }
-
 
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureDrawArrow(WPARAM wParam, LPARAM lParam)
 {
 	if (wParam) {
-		m_selectAreaEditMode = SELECT_AREA_EDIT_DRAW_ARROW;
+		m_selectAreaEditMode = SC_TOOL_TYPE_ARROW;
 		m_toolBarSet.SetFontSize(m_arrowSize);
 		m_toolBarSet.ShowWindow(SW_SHOW);
 	} else {
-		m_selectAreaEditMode = SELECT_AREA_EDIT_NONE;
+		m_selectAreaEditMode = SC_TOOL_TYPE_NONE;
 		m_toolBarSet.ShowWindow(SW_HIDE);
 	}
 
 	return 0;
 }
 
-
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureText(WPARAM wParam, LPARAM lParam)
 {
 	if (wParam) {
-		m_selectAreaEditMode = SELECT_AREA_EDIT_DRAW_TEXT;
+		m_selectAreaEditMode = SC_TOOL_TYPE_TEXT;
 
 		m_toolBarSet.SetFontSize(m_fontSize);
 		m_toolBarSet.ShowWindow(SW_SHOW);
 	} else {
-		m_selectAreaEditMode = SELECT_AREA_EDIT_NONE;
+		m_selectAreaEditMode = SC_TOOL_TYPE_NONE;
 		m_toolBarSet.ShowWindow(SW_HIDE);
 	}
 
@@ -389,24 +385,23 @@ afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureColor(WPARAM wParam, LPARAM lP
 	return 0;
 }
 
-
 afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureSize(WPARAM wParam, LPARAM lParam)
 {
 	int size = m_toolBarSet.GetFontSize();
 
 	switch (m_selectAreaEditMode)
 	{
-	case SELECT_AREA_EDIT_DRAW_ARROW:
+	case SC_TOOL_TYPE_ARROW:
 		m_arrowSize = size;
 		break;
-	case SELECT_AREA_EDIT_DRAW_CIRCLE:
+	case SC_TOOL_TYPE_CIRCLE:
 		m_circleSize = size;
 		break;
-	case SELECT_AREA_EDIT_DRAW_RECT:
+	case SC_TOOL_TYPE_RECTANGLE:
 		m_rectSize = size;
 		// set to draw panel
 		break;
-	case SELECT_AREA_EDIT_DRAW_TEXT:
+	case SC_TOOL_TYPE_TEXT:
 		m_fontSize = size;
 		break;
 	default:
@@ -415,8 +410,6 @@ afx_msg LRESULT CScreenCaptureDlg::OnScreenCaptureSize(WPARAM wParam, LPARAM lPa
 
 	return 0;
 }
-
-
 
 BOOL CScreenCaptureDlg::DrawUserDrawArrow(CDC * pCDC, CUserDraw * pUserDraw)
 {
@@ -535,16 +528,12 @@ BOOL CScreenCaptureDlg::PreTranslateMessage(MSG* pMsg)
 	//return CDialogEx::PreTranslateMessage(pMsg);
 }
 
-
-
-
 void CScreenCaptureDlg::OnSetFocus(CWnd* pOldWnd)
 {
 	CDialogEx::OnSetFocus(pOldWnd);
 
 	// CreateSolidCaret(2, 20);
 }
-
 
 void CScreenCaptureDlg::OnKillFocus(CWnd* pNewWnd)
 {
@@ -553,7 +542,7 @@ void CScreenCaptureDlg::OnKillFocus(CWnd* pNewWnd)
 	DestroyCaret();
 }
 
-void CScreenCaptureDlg::SelectedAreaChangeEvent(const SCDrawPanel *scDrawPanel, CRect &rect)
+void CScreenCaptureDlg::SelectedAreaChangeEvent(const SCDrawPanel *scDrawPanel, const CRect &rect)
 {
 	CRect toolBarRect;
 	m_toolBar.GetWindowRect(toolBarRect);

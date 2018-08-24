@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "tool/rectangle/SCRectangleTool.h"
+#include "tool/SCRectangleTool.h"
 #include <GdiPlus.h>
 #include <Windows.h>
 

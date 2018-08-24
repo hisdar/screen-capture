@@ -1,9 +1,8 @@
 #pragma once
 
-#include "tool/base/SCBaseToolView.h"
 #include "base/SCObject.h"
 
-class SCCircleTool : public SCBaseToolView, public SCObject
+class SCCircleTool : public SCObject
 {
 public:
 	SCCircleTool();

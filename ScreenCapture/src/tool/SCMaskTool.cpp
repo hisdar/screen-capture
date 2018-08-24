@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "base/base-def.h"
-#include "tool/mask/SCMaskTool.h"
+#include "tool/SCMaskTool.h"
 
 
 SCMaskTool::SCMaskTool()

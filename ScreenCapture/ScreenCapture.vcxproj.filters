@@ -129,28 +129,10 @@
     <ClInclude Include="include\SCMonitorManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\tool\select\SCSelectToolController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tool\select\SCSelectToolView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tool\base\SCBaseToolView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tool\base\SCBaseTool.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\SCDrawPanel.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\base\SCObject.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tool\base\SCBaseToolController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tool\select\SCSelectTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\base\SCDC.h">
@@ -162,19 +144,25 @@
     <ClInclude Include="include\base\SCStatic.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\tool\arrow\SCArrowTool.h">
+    <ClInclude Include="include\tool\SCArrowTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\tool\circle\SCCircleTool.h">
+    <ClInclude Include="include\tool\SCTextTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\tool\mask\SCMaskTool.h">
+    <ClInclude Include="include\tool\SCBaseTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\tool\rectangle\SCRectangleTool.h">
+    <ClInclude Include="include\tool\SCCircleTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\tool\text\SCTextTool.h">
+    <ClInclude Include="include\tool\SCMaskTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\SCRectangleTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tool\SCSelectTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -203,19 +191,10 @@
     <ClCompile Include="src\SCMonitorManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\tool\select\SCSelectToolController.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tool\select\SCSelectToolView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\SCObject.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\SCDrawPanel.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tool\select\SCSelectTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\base\SCDC.cpp">
@@ -227,19 +206,22 @@
     <ClCompile Include="src\base\SCStatic.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\tool\arrow\SCArrowTool.cpp">
+    <ClCompile Include="src\tool\SCArrowTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\tool\circle\SCCircleTool.cpp">
+    <ClCompile Include="src\tool\SCCircleTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\tool\mask\SCMaskTool.cpp">
+    <ClCompile Include="src\tool\SCMaskTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\tool\rectangle\SCRectangleTool.cpp">
+    <ClCompile Include="src\tool\SCSelectTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\tool\text\SCTextTool.cpp">
+    <ClCompile Include="src\tool\SCRectangleTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool\SCTextTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

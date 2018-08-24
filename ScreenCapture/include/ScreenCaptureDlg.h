@@ -22,9 +22,8 @@ public:
 // 对话框数据
 	enum { IDD = IDD_SCREENCAPTURE_DIALOG };
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
-	virtual void SelectedAreaChangeEvent(const SCDrawPanel *scDrawPanel, CRect &rect);
 
 // 实现
 protected:
@@ -85,7 +84,7 @@ public:
 	BOOL DrawUserDrawArrow(CDC * pCDC, CUserDraw * pUserDraw);
 	BOOL DrawUserDrawText(CDC * pCDC, CUserDraw * pUserDraw);
 
-
+	virtual void SelectedAreaChangeEvent(const SCDrawPanel *scDrawPanel, const CRect &rect);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 

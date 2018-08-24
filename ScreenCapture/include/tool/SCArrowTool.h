@@ -1,14 +1,12 @@
 #pragma once
 
-#include "tool/base/SCBaseToolView.h"
 #include "base/SCObject.h"
 
-/// @brief 矩形工具，用来绘制矩形
-class SCRectangleTool : public SCBaseToolView, public SCObject
+class SCArrowTool : public SCObject
 {
 public:
-	SCRectangleTool();
-	virtual ~SCRectangleTool();
+	SCArrowTool();
+	virtual ~SCArrowTool();
 
 	virtual BOOL Draw(CDC &cdc);
 
